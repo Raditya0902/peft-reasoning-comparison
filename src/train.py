@@ -10,7 +10,7 @@ import numpy as np
 import torch
 import yaml
 from datasets import load_dataset
-from peft import LoraConfig, get_peft_model
+from peft import IA3Config, LoraConfig, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -43,6 +43,14 @@ class LoraTrainConfig:
     target_modules: list[str]
     bias: str
     task_type: str
+    use_dora: bool = False
+
+
+@dataclass(frozen=True)
+class Ia3TrainConfig:
+    target_modules: list[str]
+    feedforward_modules: list[str]
+    task_type: str
 
 
 @dataclass(frozen=True)
@@ -68,8 +76,9 @@ class TrainingConfig:
 class TrainConfig:
     model: ModelConfig
     data: DataConfig
-    lora: LoraTrainConfig
     training: TrainingConfig
+    lora: LoraTrainConfig | None = None
+    ia3: Ia3TrainConfig | None = None
 
 
 def _load_config(path: str) -> TrainConfig:
@@ -83,8 +92,30 @@ def _load_config(path: str) -> TrainConfig:
 
     m = raw.get("model", {})
     d = raw.get("data", {})
-    lo = raw.get("lora", {})
     tr = raw.get("training", {})
+
+    lora_cfg: LoraTrainConfig | None = None
+    ia3_cfg: Ia3TrainConfig | None = None
+    if "lora" in raw:
+        lo = raw["lora"]
+        lora_cfg = LoraTrainConfig(
+            r=int(_require(lo, "r", "lora")),
+            lora_alpha=int(_require(lo, "lora_alpha", "lora")),
+            lora_dropout=float(_require(lo, "lora_dropout", "lora")),
+            target_modules=list(_require(lo, "target_modules", "lora")),
+            bias=str(_require(lo, "bias", "lora")),
+            task_type=str(_require(lo, "task_type", "lora")),
+            use_dora=bool(lo.get("use_dora", False)),
+        )
+    elif "ia3" in raw:
+        ia = raw["ia3"]
+        ia3_cfg = Ia3TrainConfig(
+            target_modules=list(_require(ia, "target_modules", "ia3")),
+            feedforward_modules=list(_require(ia, "feedforward_modules", "ia3")),
+            task_type=str(_require(ia, "task_type", "ia3")),
+        )
+    else:
+        raise ValueError("Config must contain either a 'lora:' or 'ia3:' section")
 
     return TrainConfig(
         model=ModelConfig(
@@ -97,14 +128,6 @@ def _load_config(path: str) -> TrainConfig:
             val_split=_require(d, "val_split", "data"),
             seed=int(_require(d, "seed", "data")),
             max_seq_length=int(_require(d, "max_seq_length", "data")),
-        ),
-        lora=LoraTrainConfig(
-            r=int(_require(lo, "r", "lora")),
-            lora_alpha=int(_require(lo, "lora_alpha", "lora")),
-            lora_dropout=float(_require(lo, "lora_dropout", "lora")),
-            target_modules=list(_require(lo, "target_modules", "lora")),
-            bias=str(_require(lo, "bias", "lora")),
-            task_type=str(_require(lo, "task_type", "lora")),
         ),
         training=TrainingConfig(
             output_dir=str(_require(tr, "output_dir", "training")),
@@ -123,6 +146,8 @@ def _load_config(path: str) -> TrainConfig:
             fp16=bool(_require(tr, "fp16", "training")),
             gradient_checkpointing=bool(_require(tr, "gradient_checkpointing", "training")),
         ),
+        lora=lora_cfg,
+        ia3=ia3_cfg,
     )
 
 
@@ -211,14 +236,22 @@ def main() -> None:
     print(f"Loading model: {cfg.model.name}")
     model, tokenizer = _load_model_and_tokenizer(cfg.model.name, cfg.model.dtype)
 
-    peft_config = LoraConfig(
-        r=cfg.lora.r,
-        lora_alpha=cfg.lora.lora_alpha,
-        lora_dropout=cfg.lora.lora_dropout,
-        target_modules=cfg.lora.target_modules,
-        bias=cfg.lora.bias,
-        task_type=cfg.lora.task_type,
-    )
+    if cfg.lora is not None:
+        peft_config = LoraConfig(
+            r=cfg.lora.r,
+            lora_alpha=cfg.lora.lora_alpha,
+            lora_dropout=cfg.lora.lora_dropout,
+            target_modules=cfg.lora.target_modules,
+            bias=cfg.lora.bias,
+            task_type=cfg.lora.task_type,
+            use_dora=cfg.lora.use_dora,
+        )
+    else:
+        peft_config = IA3Config(
+            target_modules=cfg.ia3.target_modules,
+            feedforward_modules=cfg.ia3.feedforward_modules,
+            task_type=cfg.ia3.task_type,
+        )
     model = get_peft_model(model, peft_config)
     model.enable_input_require_grads()
 
