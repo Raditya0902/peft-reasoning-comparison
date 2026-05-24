@@ -1,0 +1,20 @@
+# predictions and large output files
+results/predictions/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# model weights and trained adapters
+*.safetensors
+adapters/
+
+# Claude Code project files and dev docs (not needed in repo)
+.claude/
+CLAUDE.md
+dev/
+
+# misc
+.env
+.DS_Store

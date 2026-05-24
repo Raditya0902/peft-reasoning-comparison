@@ -1,0 +1,10 @@
+[project]
+name = "peft-reasoning-comparison"
+version = "0.1.0"
+description = "Comparison of PEFT methods (LoRA, DoRA, IA3) on reasoning tasks"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = ["unit: fast, isolated unit tests"]
