@@ -155,10 +155,10 @@ def _load_model_and_tokenizer(
 
     if device == "cuda":
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, dtype=dtype, device_map="auto"
+            model_id, torch_dtype=dtype, device_map="auto"
         )
     else:
-        model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype)
+        model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype)
         model = model.to(device)
 
     return model, tokenizer
