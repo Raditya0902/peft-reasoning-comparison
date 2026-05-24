@@ -176,6 +176,7 @@ def _print_summary(records: list[dict]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate a causal LM on GSM8K.")
     parser.add_argument("--model", required=True, help="HuggingFace model ID")
+    parser.add_argument("--adapter", default=None, help="Path to PEFT adapter directory")
     parser.add_argument("--dataset", default="gsm8k", help="Dataset name")
     parser.add_argument("--split", required=True, help="Dataset split, e.g. test[:10]")
     parser.add_argument("--output", required=True, help="Output JSONL path")
@@ -188,6 +189,13 @@ def main() -> None:
 
     print(f"Loading model: {args.model}")
     model, tokenizer = _load_model_and_tokenizer(args.model)
+
+    if args.adapter is not None:
+        from peft import PeftModel
+
+        print(f"Loading adapter: {args.adapter}")
+        model = PeftModel.from_pretrained(model, args.adapter)
+        model = model.merge_and_unload()
 
     print(f"Loading dataset: {args.dataset} / {args.split}")
     dataset = load_dataset(args.dataset, "main", split=args.split)
@@ -206,6 +214,7 @@ def main() -> None:
             record = _evaluate_example(
                 idx, example, model, tokenizer, few_shot_examples
             )
+            record["adapter_path"] = args.adapter
             records.append(record)
             fout.write(json.dumps(record) + "\n")
             fout.flush()
