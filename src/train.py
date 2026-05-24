@@ -196,6 +196,12 @@ def main() -> None:
         action="store_true",
         help="Load model and apply LoRA, print param counts, then exit without training",
     )
+    parser.add_argument(
+        "--resume_from_checkpoint",
+        type=str,
+        default=None,
+        help="Path to a checkpoint directory to resume training from",
+    )
     args = parser.parse_args()
 
     cfg = _load_config(args.config)
@@ -256,6 +262,7 @@ def main() -> None:
         fp16=cfg.training.fp16,
         gradient_checkpointing=cfg.training.gradient_checkpointing,
         report_to="none",
+        resume_from_checkpoint=args.resume_from_checkpoint,
     )
 
     data_collator = DataCollatorForSeq2Seq(
