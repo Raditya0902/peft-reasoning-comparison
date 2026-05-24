@@ -20,5 +20,22 @@
     "avg_latency_ms": 15103,
     "avg_output_tokens": 92,
     "seed": 42
+  },
+  {
+    "run": "lora",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "adapter": "adapters/lora",
+    "train_examples": 6000,
+    "epochs": 2,
+    "final_train_loss": 3.4113,
+    "final_eval_loss": 0.771,
+    "trainable_params": 4587520,
+    "trainable_pct": 0.14,
+    "train_runtime_s": 6739,
+    "seed": 42,
+    "accuracy": null,
+    "extraction_failure_rate": null,
+    "avg_latency_ms": null,
+    "avg_output_tokens": null
   }
 ]
