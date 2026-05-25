@@ -30,9 +30,7 @@ peft-reasoning-comparison/
 │   ├── train.py             # PEFT training loop (--config, --dry_run, --resume_from_checkpoint)
 │   ├── extract_answer.py    # Regex answer extraction pipeline
 │   ├── categorize.py        # Seven-category question taxonomy
-│   ├── report_tables.py     # Generate markdown tables from prediction JSONL files
-│   ├── infer.py             # Low-level model inference utilities
-│   └── profile.py           # Latency and token profiling utilities
+│   └── report_tables.py     # Generate markdown tables from prediction JSONL files
 ├── configs/
 │   ├── base.yaml            # Shared hyperparameter defaults
 │   ├── lora.yaml            # LoRA-specific config (r=16, alpha=32)
@@ -43,7 +41,7 @@ peft-reasoning-comparison/
 │   ├── test_categorization.py      # 9 unit tests for the category taxonomy
 │   └── test_metrics.py             # 5 unit tests for accuracy and failure-rate metrics
 ├── results/
-│   ├── predictions/         # Per-run prediction JSONL files (100 examples each)
+│   ├── predictions/         # Per-run prediction JSONL files
 │   ├── metrics/
 │   │   └── baseline_summary.json   # Aggregated metrics for all 5 runs
 │   └── report_tables.md     # Generated markdown tables (Tables 1–3)

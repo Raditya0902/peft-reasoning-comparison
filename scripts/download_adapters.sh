@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 PROJECT=dllm-refactor-2026
 ZONE=us-central1-a
 INSTANCE=peft-training

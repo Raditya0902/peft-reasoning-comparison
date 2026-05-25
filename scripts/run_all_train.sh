@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-# run_all_train.sh — launch training for all PEFT configurations (placeholder)
+set -euo pipefail
+python -m src.train --config configs/lora.yaml
+python -m src.train --config configs/dora.yaml
+python -m src.train --config configs/ia3.yaml
