@@ -83,15 +83,21 @@ def _markdown_table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join([fmt_row(headers), separator] + [fmt_row(row) for row in rows])
 
 
+def _binomial_ci(p: float, n: int) -> tuple[float, float]:
+    margin = 1.96 * (p * (1 - p) / n) ** 0.5
+    return max(0.0, p - margin), min(1.0, p + margin)
+
+
 def _build_main_results_table(run_records: dict[str, list[dict]]) -> str:
     metrics = {run: _compute_main_metrics(records) for run, records in run_records.items()}
     sorted_runs = sorted(RUNS, key=lambda r: metrics[r]["accuracy"], reverse=True)
 
-    headers = ["Run", "Accuracy", "Extraction Failure Rate", "Avg Latency (ms)", "Avg Output Tokens"]
+    headers = ["Run", "Accuracy", "95% CI", "Extraction Failure Rate", "Avg Latency (ms)", "Avg Output Tokens"]
     rows = [
         [
             run,
             f"{metrics[run]['accuracy']:.4f}",
+            "[{:.4f}, {:.4f}]".format(*_binomial_ci(metrics[run]["accuracy"], len(run_records[run]))),
             f"{metrics[run]['extraction_failure_rate']:.4f}",
             f"{metrics[run]['avg_latency_ms']:.2f}",
             f"{metrics[run]['avg_output_tokens']:.2f}",
