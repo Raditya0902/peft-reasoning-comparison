@@ -19,3 +19,4 @@ dev/
 .env
 .DS_Store
 adapters/
+results/report_tables.md
