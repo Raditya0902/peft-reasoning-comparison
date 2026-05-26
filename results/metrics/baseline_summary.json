@@ -2,28 +2,29 @@
   {
     "run": "base_zeroshot",
     "model": "meta-llama/Llama-3.2-3B-Instruct",
-    "split": "test[:100]",
+    "split": "test",
     "few_shot": 0,
-    "accuracy": 0.75,
-    "extraction_failure_rate": 0.01,
-    "avg_latency_ms": 17376,
-    "avg_output_tokens": 169,
+    "accuracy": 0.7559,
+    "extraction_failure_rate": 0.0182,
+    "avg_latency_ms": 7075.75,
+    "avg_output_tokens": 173.45,
     "seed": 42
   },
   {
     "run": "base_fewshot5",
     "model": "meta-llama/Llama-3.2-3B-Instruct",
-    "split": "test[:100]",
+    "split": "test",
     "few_shot": 5,
-    "accuracy": 0.65,
-    "extraction_failure_rate": 0.02,
-    "avg_latency_ms": 15103,
-    "avg_output_tokens": 92,
+    "accuracy": 0.7028,
+    "extraction_failure_rate": 0.0023,
+    "avg_latency_ms": 4148.45,
+    "avg_output_tokens": 89.81,
     "seed": 42
   },
   {
     "run": "lora",
     "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "split": "test",
     "adapter": "adapters/lora",
     "train_examples": 6000,
     "epochs": 2,
@@ -33,14 +34,15 @@
     "trainable_pct": 0.14,
     "train_runtime_s": 6739,
     "seed": 42,
-    "accuracy": 0.63,
-    "extraction_failure_rate": 0.01,
-    "avg_latency_ms": 10735,
-    "avg_output_tokens": 106
+    "accuracy": 0.6399,
+    "extraction_failure_rate": 0.0045,
+    "avg_latency_ms": 4514.11,
+    "avg_output_tokens": 109.29
   },
   {
     "run": "dora",
     "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "split": "test",
     "adapter": "adapters/dora",
     "train_examples": 6000,
     "epochs": 2,
@@ -50,14 +52,15 @@
     "trainable_pct": 0.15,
     "train_runtime_s": 7854,
     "seed": 42,
-    "accuracy": 0.66,
-    "extraction_failure_rate": 0.01,
-    "avg_latency_ms": 10059,
-    "avg_output_tokens": 108
+    "accuracy": 0.6338,
+    "extraction_failure_rate": 0.0030,
+    "avg_latency_ms": 4475.09,
+    "avg_output_tokens": 108.36
   },
   {
     "run": "ia3",
     "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "split": "test",
     "adapter": "adapters/ia3",
     "train_examples": 6000,
     "epochs": 2,
@@ -67,9 +70,9 @@
     "trainable_pct": 0.01,
     "train_runtime_s": 6544,
     "seed": 42,
-    "accuracy": 0.67,
-    "extraction_failure_rate": 0.03,
-    "avg_latency_ms": 13402,
-    "avg_output_tokens": 139
+    "accuracy": 0.6975,
+    "extraction_failure_rate": 0.0205,
+    "avg_latency_ms": 6014.07,
+    "avg_output_tokens": 146.27
   }
 ]
