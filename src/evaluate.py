@@ -196,6 +196,7 @@ def main() -> None:
         print(f"Loading adapter: {args.adapter}")
         model = PeftModel.from_pretrained(model, args.adapter)
         model = model.merge_and_unload()
+        model = model.to(torch.bfloat16)
 
     print(f"Loading dataset: {args.dataset} / {args.split}")
     dataset = load_dataset(args.dataset, "main", split=args.split)
