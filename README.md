@@ -19,7 +19,7 @@ Zero-shot (0.7559) outperformed all three trained adapters under this compute bu
 
 - **IA3 is the best adapter overall (0.6975 accuracy)**: it leads LoRA (0.6399) by 5.8 points and DoRA (0.6338) by 6.4 points; LoRA itself edges DoRA on the full test set, reversing the 100-example estimate.
 - **IA3 is the most parameter-efficient method**: 1.10 MB adapter, 286,720 trainable parameters (0.01%), 16× smaller than LoRA (17.51 MB) and DoRA (17.96 MB), while achieving the best adapter accuracy of 0.6975.
-- **All PEFT methods underperformed zero-shot (0.7559)** — final training losses of 3.41 (LoRA/DoRA) and 4.82 (IA3) indicate the models had not converged; more epochs or a larger training split are the direct remedies.
+- **All PEFT methods underperformed zero-shot (0.7559)** — final training losses of 3.41 (LoRA/DoRA) and 4.82 (IA3) indicate the models had not converged; a larger training dataset would be the most direct remedy, as the convergence experiment showed 10 epochs causes overfitting on 6,000 examples.
 - **5-shot baseline improved significantly on the full test set (0.7028 vs. 0.6500 on 100 examples)**, approaching but still below zero-shot (0.7559) — the 100-example estimate substantially understated 5-shot performance.
 - **IA3 at 10 epochs (0.6262) underperforms IA3 at 2 epochs (0.6975)** — overfitting on 6,000 examples; the optimal epoch count lies between 2 and 10.
 
@@ -73,8 +73,8 @@ pip install transformers peft datasets accelerate tqdm pyyaml torch
 python -m src.evaluate \
   --model meta-llama/Llama-3.2-3B-Instruct \
   --dataset gsm8k \
-  --split "test[:100]" \
-  --output results/predictions/base_zeroshot_100.jsonl
+  --split "test" \
+  --output results/predictions/base_zeroshot_full.jsonl
 ```
 
 ### Train LoRA adapter
@@ -90,8 +90,8 @@ python -m src.evaluate \
   --model meta-llama/Llama-3.2-3B-Instruct \
   --adapter adapters/lora \
   --dataset gsm8k \
-  --split "test[:100]" \
-  --output results/predictions/lora_100.jsonl
+  --split "test" \
+  --output results/predictions/lora_full.jsonl
 ```
 
 Replace `lora` with `dora` or `ia3` for the other adapters.
@@ -104,7 +104,7 @@ python -m src.report_tables --results_dir results/
 
 ## Hardware
 
-Training: GCP V100 (16 GB). LoRA ~1h 52min (6,739 s), DoRA ~2h 11min (7,854 s), IA3 ~1h 49min (6,544 s). Evaluation: Apple M-series Mac (MPS backend), ~17–22 min per 100 examples.
+Training: GCP V100 (16 GB). LoRA ~1h 52min (6,739 s), DoRA ~2h 11min (7,854 s), IA3 ~1h 49min (6,544 s), IA3 convergence (10 epochs): ~9h 2min (32,534 s). Evaluation: Apple M-series Mac (MPS backend), ~17–22 min per 100 examples. Full test set evaluation on V100: ~80 min per condition.
 
 ## Report
 
