@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 
-RUNS = ["base_zeroshot", "base_fewshot5", "lora", "dora", "ia3"]
-ADAPTER_RUNS = ["lora", "dora", "ia3"]
+RUNS = ["base_zeroshot", "base_fewshot5", "lora", "dora", "ia3", "ia3_convergence"]
+ADAPTER_RUNS = ["lora", "dora", "ia3", "ia3_convergence"]
 CATEGORIES = [
     "arithmetic",
     "fractions_percentages",
@@ -23,6 +23,7 @@ JSONL_FILENAMES = {
     "lora": "lora_full.jsonl",
     "dora": "dora_full.jsonl",
     "ia3": "ia3_full.jsonl",
+    "ia3_convergence": "ia3_convergence_full.jsonl",
 }
 
 

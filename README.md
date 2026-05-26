@@ -1,16 +1,17 @@
 # A Controlled Comparison of LoRA, DoRA, and IA3 for Multi-Step Math Reasoning
 
-This project evaluates three parameter-efficient fine-tuning methods—LoRA, DoRA, and IA3—against zero-shot and 5-shot in-context learning baselines on the GSM8K grade-school mathematics benchmark. All adapters were trained on `meta-llama/Llama-3.2-3B-Instruct` under a fixed compute budget (6,000 examples, 2 epochs, seed 42, single V100 GPU) with identical hyperparameters to isolate the effect of the adaptation method itself. Under this budget, all three PEFT methods underperformed the zero-shot baseline (0.7559 accuracy), with IA3 achieving the best adapter accuracy (0.6975) and also the best parameter efficiency (1.10 MB, 286,720 trainable parameters); the likely cause is underfitting at 2 epochs, not a fundamental limitation of the PEFT approach.
+This project evaluates three parameter-efficient fine-tuning methods—LoRA, DoRA, and IA3—against zero-shot and 5-shot in-context learning baselines on the GSM8K grade-school mathematics benchmark. All adapters were trained on `meta-llama/Llama-3.2-3B-Instruct` under a fixed compute budget (6,000 examples, 2 epochs, seed 42, single V100 GPU) with identical hyperparameters to isolate the effect of the adaptation method itself. Under this budget, all three PEFT methods underperformed the zero-shot baseline (0.7559 accuracy), with IA3 achieving the best adapter accuracy (0.6975) and also the best parameter efficiency (1.10 MB, 286,720 trainable parameters). A follow-up IA3 convergence experiment at 10 epochs scores 0.6262—lower than the 2-epoch run—revealing overfitting at this dataset size and suggesting the optimal epoch count lies between 2 and 10.
 
 ## Results
 
-| Run           | Accuracy | Extraction Failure Rate | Avg Latency (ms) | Avg Output Tokens |
-| ------------- | -------- | ----------------------- | ---------------- | ----------------- |
-| base_zeroshot | 0.7559   | 0.0182                  | 7075.75          | 173.45            |
-| base_fewshot5 | 0.7028   | 0.0023                  | 4148.45          | 89.81             |
-| ia3           | 0.6975   | 0.0205                  | 6014.07          | 146.27            |
-| lora          | 0.6399   | 0.0045                  | 4514.11          | 109.29            |
-| dora          | 0.6338   | 0.0030                  | 4475.09          | 108.36            |
+| Run             | Accuracy | Extraction Failure Rate | Avg Latency (ms) | Avg Output Tokens |
+| --------------- | -------- | ----------------------- | ---------------- | ----------------- |
+| base_zeroshot   | 0.7559   | 0.0182                  | 7075.75          | 173.45            |
+| base_fewshot5   | 0.7028   | 0.0023                  | 4148.45          | 89.81             |
+| ia3             | 0.6975   | 0.0205                  | 6014.07          | 146.27            |
+| lora            | 0.6399   | 0.0045                  | 4514.11          | 109.29            |
+| dora            | 0.6338   | 0.0030                  | 4475.09          | 108.36            |
+| ia3_convergence | 0.6262   | 0.0068                  | 4454.85          | 112.08            |
 
 Zero-shot (0.7559) outperformed all three trained adapters under this compute budget; see [report/peft_comparison_report.md](report/peft_comparison_report.md) for the full per-category breakdown and error analysis.
 
@@ -20,6 +21,7 @@ Zero-shot (0.7559) outperformed all three trained adapters under this compute bu
 - **IA3 is the most parameter-efficient method**: 1.10 MB adapter, 286,720 trainable parameters (0.01%), 16× smaller than LoRA (17.51 MB) and DoRA (17.96 MB), while achieving the best adapter accuracy of 0.6975.
 - **All PEFT methods underperformed zero-shot (0.7559)** — final training losses of 3.41 (LoRA/DoRA) and 4.82 (IA3) indicate the models had not converged; more epochs or a larger training split are the direct remedies.
 - **5-shot baseline improved significantly on the full test set (0.7028 vs. 0.6500 on 100 examples)**, approaching but still below zero-shot (0.7559) — the 100-example estimate substantially understated 5-shot performance.
+- **IA3 at 10 epochs (0.6262) underperforms IA3 at 2 epochs (0.6975)** — overfitting on 6,000 examples; the optimal epoch count lies between 2 and 10.
 
 ## Project Structure
 

@@ -38,11 +38,12 @@ We report overall accuracy, extraction failure rate, average inference latency, 
 
 | Run           | Accuracy | Extraction Failure Rate | Avg Latency (ms) | Avg Output Tokens |
 | ------------- | -------- | ----------------------- | ---------------- | ----------------- |
-| base_zeroshot | 0.7559   | 0.0182                  | 7075.75          | 173.45            |
-| base_fewshot5 | 0.7028   | 0.0023                  | 4148.45          | 89.81             |
-| ia3           | 0.6975   | 0.0205                  | 6014.07          | 146.27            |
-| lora          | 0.6399   | 0.0045                  | 4514.11          | 109.29            |
-| dora          | 0.6338   | 0.0030                  | 4475.09          | 108.36            |
+| base_zeroshot   | 0.7559   | 0.0182                  | 7075.75          | 173.45            |
+| base_fewshot5   | 0.7028   | 0.0023                  | 4148.45          | 89.81             |
+| ia3             | 0.6975   | 0.0205                  | 6014.07          | 146.27            |
+| lora            | 0.6399   | 0.0045                  | 4514.11          | 109.29            |
+| dora            | 0.6338   | 0.0030                  | 4475.09          | 108.36            |
+| ia3_convergence | 0.6262   | 0.0068                  | 4454.85          | 112.08            |
 
 ### 5.2 Per-Category Accuracy
 
@@ -61,9 +62,10 @@ We report overall accuracy, extraction failure rate, average inference latency, 
 
 | Run  | Adapter Size (MB) | Trainable Params | Trainable % | Train Loss | Eval Loss | Avg Latency (ms) |
 | ---- | ----------------- | ---------------- | ----------- | ---------- | --------- | ---------------- |
-| lora | 17.51             | 4587520          | 0.1400      | 3.4113     | 0.7710    | 10735.00         |
-| dora | 17.96             | 4702208          | 0.1500      | 3.4013     | 0.7709    | 10059.00         |
-| ia3  | 1.10              | 286720           | 0.0100      | 4.8241     | 1.0112    | 13402.00         |
+| lora            | 17.51             | 4587520          | 0.1400      | 3.4113     | 0.7710    | 10735.00         |
+| dora            | 17.96             | 4702208          | 0.1500      | 3.4013     | 0.7709    | 10059.00         |
+| ia3             | 1.10              | 286720           | 0.0100      | 4.8241     | 1.0112    | 13402.00         |
+| ia3_convergence | 1.10              | 286720           | 0.0100      | 3.9783     | 0.9106    | 4454.85          |
 
 ## 6. Error Analysis
 
@@ -79,13 +81,15 @@ The uncategorized examples show the sharpest regression among adapters: LoRA fal
 
 All three PEFT methods underperformed the zero-shot baseline, and the most likely explanation is underfitting. The final training losses of 3.4113 (LoRA) and 3.4013 (DoRA) are high relative to their evaluation losses (≈0.771), indicating the models had not converged. More epochs, a larger training subset, or a higher learning rate are the most direct remedies.
 
-Among the adapters, IA3 (0.6975) leads both LoRA (0.6399) and DoRA (0.6338); LoRA itself edges DoRA on the full test set, reversing the preliminary 100-example estimate. IA3 offers the best accuracy-efficiency tradeoff—a 1.10 MB adapter 16× smaller than LoRA or DoRA, fine-tuning only 0.01% of base model parameters—but its elevated extraction failure rate (2.05%) and higher training loss (4.8241) suggest it benefits more from extended training.
+Among the adapters, IA3 (0.6975) leads both LoRA (0.6399) and DoRA (0.6338); LoRA itself edges DoRA on the full test set, reversing the preliminary 100-example estimate. IA3 offers the best accuracy-efficiency tradeoff—a 1.10 MB adapter 16× smaller than LoRA or DoRA, fine-tuning only 0.01% of base model parameters—with its main remaining deployment concern being an elevated extraction failure rate (2.05%).
+
+A follow-up IA3 convergence experiment at 10 epochs scores 0.6262, lower than the 2-epoch run (0.6975), indicating overfitting rather than underfitting at this dataset size. The optimal epoch count for IA3 on 6,000 examples lies between 2 and 10; extended training beyond that budget degrades generalization.
 
 The 5-shot baseline (0.7028) still underperforms zero-shot (0.7559), though by a smaller margin than the 100-example results (0.6500 vs. 0.7500) suggested. LLaMA-3.2-3B-Instruct expects a clean single-turn chat format; prepending five solved examples in the user turn likely conflicts with that expectation. Whether chat-formatted few-shot examples—interleaved user and assistant turns—recover this gap is a natural next experiment.
 
 ## 8. Limitations
 
-The main results are evaluated on the full GSM8K test set (1,319 examples); the preliminary 100-example results were misleading in two key ways: the 5-shot baseline appeared to underperform zero-shot by 10 points (0.6500 vs. 0.7500), whereas on the full set the gap narrows to 5.3 points (0.7028 vs. 0.7559), and DoRA appeared to be the best adapter (0.6600), while IA3 in fact leads (0.6975) with DoRA trailing LoRA on the full set. All experiments use a single base model, so findings may not generalize to larger models, encoder-decoder architectures, or models with different instruction-tuning regimes. A single training seed (42) was used throughout, and without multiple seeds results reflect a single initialization. Two of the seven taxonomy categories—unit\_conversion and algebraic—had zero examples in the evaluation subset, leaving those dimensions unmeasured. GSM8K contamination is also a real concern: LLaMA-3.2 was trained on large internet corpora and may have encountered GSM8K problems during pretraining, which would inflate the zero-shot baseline and make PEFT improvements harder to detect above that ceiling.
+The main results are evaluated on the full GSM8K test set (1,319 examples); the preliminary 100-example results were misleading in two key ways: the 5-shot baseline appeared to underperform zero-shot by 10 points (0.6500 vs. 0.7500), whereas on the full set the gap narrows to 5.3 points (0.7028 vs. 0.7559), and DoRA appeared to be the best adapter (0.6600), while IA3 in fact leads (0.6975) with DoRA trailing LoRA on the full set. The optimal epoch count for IA3 was not systematically searched; the convergence experiment at 10 epochs reveals overfitting relative to the 2-epoch run (0.6262 vs. 0.6975), but the epoch count that maximizes performance was not identified. All experiments use a single base model, so findings may not generalize to larger models, encoder-decoder architectures, or models with different instruction-tuning regimes. A single training seed (42) was used throughout, and without multiple seeds results reflect a single initialization. Two of the seven taxonomy categories—unit\_conversion and algebraic—had zero examples in the evaluation subset, leaving those dimensions unmeasured. GSM8K contamination is also a real concern: LLaMA-3.2 was trained on large internet corpora and may have encountered GSM8K problems during pretraining, which would inflate the zero-shot baseline and make PEFT improvements harder to detect above that ceiling.
 
 ## 9. Reproducibility
 
