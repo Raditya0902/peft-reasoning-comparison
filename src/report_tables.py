@@ -18,11 +18,11 @@ CATEGORIES = [
     "uncategorized",
 ]
 JSONL_FILENAMES = {
-    "base_zeroshot": "base_zeroshot_100.jsonl",
-    "base_fewshot5": "base_fewshot5_100.jsonl",
-    "lora": "lora_100.jsonl",
-    "dora": "dora_100.jsonl",
-    "ia3": "ia3_100.jsonl",
+    "base_zeroshot": "base_zeroshot_full.jsonl",
+    "base_fewshot5": "base_fewshot5_full.jsonl",
+    "lora": "lora_full.jsonl",
+    "dora": "dora_full.jsonl",
+    "ia3": "ia3_full.jsonl",
 }
 
 
