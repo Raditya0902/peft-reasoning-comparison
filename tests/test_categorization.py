@@ -23,6 +23,23 @@ def test_unit_conversion_hours_to_minutes():
 
 
 @pytest.mark.unit
+def test_implicit_unit_conversion_overlaps_arithmetic():
+    tags = categorize("She buys a 2-yard ribbon. How many feet of ribbon does she have?")
+    assert tags == ["arithmetic", "unit_conversion"]
+
+
+@pytest.mark.unit
+def test_conversion_does_not_match_a_single_unit_or_an_object():
+    assert "unit_conversion" not in categorize("How many hours are left after 3 hours?")
+    assert "unit_conversion" not in categorize("Convert 3 cups of flour to dough.")
+
+
+@pytest.mark.unit
+def test_measurement_abbreviation_does_not_count_as_an_equation():
+    assert "algebraic" not in categorize("A 2 m + 4 m ribbon is cut into pieces.")
+
+
+@pytest.mark.unit
 def test_multi_hop_first_then_then():
     result = categorize("First she earns X, then spends Y, then saves Z")
     assert "multi_hop" in result

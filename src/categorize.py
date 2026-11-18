@@ -32,13 +32,18 @@ _FRACTIONS_PERCENTAGES: list[re.Pattern[str]] = [
     re.compile(r"\bout\s+of\b"),
 ]
 
-_UNIT_CONVERSION: list[re.Pattern[str]] = [
-    re.compile(r"\bconvert\b"),
-    re.compile(
-        r"\bto\s+(?:minutes?|hours?|seconds?|days?|weeks?"
-        r"|meters?|kilometers?|km|miles?|feet|celsius|fahrenheit)\b"
-    ),
+_UNIT_FAMILIES = [
+    ("seconds?", "minutes?", "hours?", "days?", "weeks?", "months?", "years?"),
+    ("inch(?:es)?", "foot|feet", "yards?", "miles?", "centimeters?|cm", "meters?", "kilometers?|km"),
+    ("ounces?", "pounds?|lbs?", "grams?", "kilograms?|kg"),
+    ("cups?", "pints?", "quarts?", "gallons?", "liters?", "milliliters?|ml"),
+    ("celsius", "fahrenheit"),
 ]
+_UNIT_PATTERNS = [
+    [re.compile(rf"\b(?:{unit})\b") for unit in family]
+    for family in _UNIT_FAMILIES
+]
+_UNIT_TARGET = re.compile(r"\b(?:how\s+many(?:\s+total)?|in|to)\s*$")
 
 _MULTI_HOP: list[re.Pattern[str]] = [
     re.compile(r"\bfirst\b.{1,150}\bthen\b", re.DOTALL),
@@ -50,9 +55,8 @@ _MULTI_HOP: list[re.Pattern[str]] = [
 
 _ALGEBRAIC: list[re.Pattern[str]] = [
     re.compile(r"\bsolve\s+for\b"),
-    re.compile(r"\b(?:x|y|z|n|m)\s+if\b"),
-    re.compile(r"\b\d+\s*(?:x|y|z|n|m)\s*[+\-\*=]"),
-    re.compile(r"\bwhat\s+is\s+(?:x|y|z|n|m)\b"),
+    re.compile(r"\b\d+\s*[xyz]\s*[+\-*=]"),
+    re.compile(r"\b(?:what\s+is|find)\s+[xyz]\b"),
     re.compile(r"\bequation\b"),
     re.compile(r"\bvariable\b"),
 ]
@@ -78,6 +82,21 @@ def _matches_any(text: str, patterns: list[re.Pattern[str]]) -> bool:
     return any(p.search(text) for p in patterns)
 
 
+def _has_unit_conversion_cue(text: str) -> bool:
+    # Require two distinct units of the same dimension and a cue for the target.
+    for family in _UNIT_PATTERNS:
+        matches = [list(pattern.finditer(text)) for pattern in family]
+        if sum(bool(unit_matches) for unit_matches in matches) < 2:
+            continue
+        if any(
+            _UNIT_TARGET.search(text[:match.start()])
+            for unit_matches in matches
+            for match in unit_matches
+        ):
+            return True
+    return False
+
+
 def _is_distractor_heavy(text: str) -> bool:
     return (
         bool(_DISTRACTOR_DESCRIPTOR.search(text))
@@ -86,14 +105,14 @@ def _is_distractor_heavy(text: str) -> bool:
 
 
 def categorize(question: str) -> list[str]:
-    """Return zero or more category tags for a question via keyword matching."""
+    """Return overlapping lexical tags for a question via keyword matching."""
     lowered = question.lower()
     tags: list[str] = []
     if _matches_any(lowered, _ARITHMETIC):
         tags.append("arithmetic")
     if _matches_any(lowered, _FRACTIONS_PERCENTAGES):
         tags.append("fractions_percentages")
-    if _matches_any(lowered, _UNIT_CONVERSION):
+    if _has_unit_conversion_cue(lowered):
         tags.append("unit_conversion")
     if _matches_any(lowered, _MULTI_HOP):
         tags.append("multi_hop")
