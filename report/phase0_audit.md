@@ -58,4 +58,64 @@ Use a single V100 16 GB. The planning anchors are approximately two hours per tw
 
 Interpret Phase 1 as a comparison of target formats. Original versus stripped gold isolates removing calculator notation. The self-generated arm also changes wording, length and reasoning style, so a recovery there would support a target-distribution explanation without establishing length as the causal mediator. Matching the accepted question IDs controls question selection across the three arms and restricts inference to teacher-solvable training questions. Record the acceptance and realized training-token budgets to make that scope visible. The Phase 2 comparison estimates performance after validation-tuning Base and contrasts it with the fixed historical Instruct recipe and the Phase 1 ablation. A causal comparison of initialization under the same tuning protocol would also require a matched LR selection and seed protocol on Instruct.
 
-**Checkpoint. Awaiting review before Phase 1.**
+**Phase 0 checkpoint approved.**
+
+## Phase 1 preregistration
+
+Phase 0 was approved. This section supersedes the original Phase 1 and 2 budgets and designs where they differ.
+
+### Parity before training
+
+Use the current Instruct chat rendering, seed 42, greedy generation, and the full official test split for batched zero-shot and five-shot. Save the rendered prompt, unpadded input IDs, and generated IDs through the first EOS for each question. Replay a fixed seed-42 sample of 128 IDs per condition with batch size one, on the same GPU, model revision, dtype, tokenizer and software environment. Freeze the date inserted by the Llama chat template across parity runs. Compare raw completion IDs after checking exact prompt text and input IDs. Require **at least 95% exact token-sequence agreement** in each replay and **at most 1 percentage point absolute full-test accuracy drift** against each archive. The archives contain decoded text and lengths. Raw-ID parity and prompt equality are therefore verified against the serial replay. Report archive decoded-text agreement separately. A failing condition stops Phase 1 before training.
+
+Use a fresh results directory for every attempt.
+
+```sh
+bash scripts/run_phase1_parity.sh results/phase1-v1/parity 8 bfloat16
+```
+
+After parity, time a batched sampling pilot on training IDs, with two draws per question and the same batch settings intended for full sampling. Send the revised GPU estimate before launching the arms. Estimate candidate sampling from elapsed seconds per candidate question, three final decodes from measured zero-shot batched test time, and training from the historical per-arm time, scaled for accepted-pool size and measured target lengths once available. Report the uncertainty in the training component until the target workload can be profiled. Use an explicitly recorded supported precision if the historical precision is unavailable.
+
+### Matched LoRA arms and decision rules
+
+Generate two teacher completions per question on `train[:6000]` at temperature 0.7 and top-p 0.95 with the same batched generation path. Keep the first completion with a correctly extracted final integer. Hold its accepted question IDs, LoRA hyperparameters, seed, epochs, and assistant-only objective fixed across raw gold (a), gold with calculator annotations stripped (b), and teacher CoT (c). The token-normalized objective uses a sum of shifted assistant-token cross-entropy divided by the supervised token count across the whole accumulation window. Record the distribution of supervised length, including the end-of-turn token, and the realized total token budgets. Keep all settings fixed before any arm sees test results.
+
+For the three within-ablation pairs, use two-sided exact McNemar on test correctness, with Holm adjustment across those three tests. Claim an accuracy effect only when adjusted p is below 0.05 and the absolute gap **exceeds 2 percentage points**. Report all other format comparisons as **not distinguishable**. Report accuracy, 10,000-resample question-bootstrap intervals, average output tokens, extraction failures, and descriptive accuracy/counts for generated lengths of 0–99, 100–149, 150–199 and 200 or more tokens. Generated length can change with the intervention. These strata are descriptive and do not identify a length-mediated causal effect.
+
+Label the archived LoRA and the parity-verified batched Instruct zero-shot as references. Report arm (a) versus archived LoRA separately, with its paired accuracy gap and exact p-value, as an **historical recipe comparison**. The requested shared accepted pool for arm (a) differs from the archived full 6,000, and the archive lacks complete runtime and loss metadata. This contrast combines masking, normalization and pool selection, with possible runtime differences. Isolating masking plus normalization would require an additional full-prompt run on the same accepted pool, with its historical objective normalization reproduced and the same remaining settings. No extra arm is allocated here.
+
+### Revised Phase 2 plan
+
+Use Llama-3.2-3B Base where feasible on the V100, with an answer-format-aware plain prompt shared across the unadapted zero-shot, fixed five-shot, and adapted conditions. Use solved training-pool demonstrations in the five-shot condition. Use one-epoch seed-42 LR sweeps for LoRA and IA3, three validation candidates per method as specified above. Select by exact-match accuracy on `train[6000:6500]`, with ties going to the lower LR. Use the selected LoRA LR for DoRA and disclose the lack of separate DoRA tuning. Retrain the three methods from scratch for the full two epochs at seeds 42, 43 and 44. Keep the full test reserved for the final nine adapters and two reference baselines.
+
+The updated budget will use six one-epoch trainings, six validation decodes, nine two-epoch trainings, and eleven full-test decodes. At historical serial rates this is roughly 42 GPU-hours. Replace the decode terms with measured Phase 1 throughput at the checkpoint, and use measured training time per full run when available. Phase 2 remains pending checkpoint review.
+
+### Run order after access is available
+
+Install the dependencies in `requirements-phase1.txt` with a PyTorch CUDA build that supports the V100. Use the parity-validated precision and prompt date for each test decode. An example for a successful BF16 parity run is below. The timing pilot comes first and only the full candidate manifest is used in training.
+
+```sh
+run=results/phase1-v1
+python -m src.phase1_targets --parity "$run/parity/parity.json" \
+  --batch_size 4 --dtype bfloat16 --subset_size 128 --output "$run/targets_pilot.jsonl"
+```
+
+After sending the updated estimate, use the same sampling batch size and omit `--subset_size` to write `$run/targets.jsonl`. Then use the same LoRA config for all arms.
+
+```sh
+date_string=$(python -c 'import json, sys; print(json.load(open(sys.argv[1]))["zeroshot"]["prompt_date"])' "$run/parity/parity.json")
+for arm in gold stripped self_generated; do
+  adapter="adapters/phase1-v1/$arm"
+  python -m src.train --config configs/lora.yaml --require_cuda --precision bfloat16 \
+    --accepted_targets "$run/targets.jsonl" --target_format "$arm" \
+    --output_dir "$adapter" --metadata "$run/${arm}_training.json"
+  python -m src.evaluate --model meta-llama/Llama-3.2-3B-Instruct \
+    --adapter "$adapter" --split test --batch_size 8 --require_cuda \
+    --dtype bfloat16 --prompt_date "$date_string" --output "$run/${arm}_test.jsonl"
+done
+python -m src.phase1_results --run_dir "$run" --parity_dir "$run/parity"
+```
+
+### Execution status
+
+GCP rejected the instance lookup because billing is disabled on the historical V100 project. No accessible alternative V100 surfaced in the configured GCP projects, and the RunPod lookup failed at DNS. The local machine has no CUDA device. The evaluator gate has no measured outcome, sampling and training await the gate, and Phase 1 GPU-hours remain unspent. The Phase 0 tables contain the available reference evidence.

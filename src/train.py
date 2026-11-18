@@ -1,23 +1,32 @@
 """Fine-tune a base model using a specified PEFT method and config."""
 
 import argparse
+import hashlib
+import json
+import platform
 import random
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, replace
+from datetime import datetime, timezone
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
 import yaml
-from datasets import load_dataset
+from datasets import Dataset, load_dataset
 from peft import IA3Config, LoraConfig, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
-    Trainer,
     TrainingArguments,
 )
+
+from src.token_trainer import TokenLossTrainer
+from src.training_objective import IGNORE_INDEX, assistant_tokens
+
+TARGET_FORMATS = ("gold", "stripped", "self_generated")
 
 
 @dataclass(frozen=True)
@@ -174,9 +183,10 @@ def _load_model_and_tokenizer(
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.truncation_side = "left"
+    tokenizer.padding_side = "right"
 
     device = _get_device()
-    dtype = torch.bfloat16 if device in ("cuda", "mps") else torch.float32
+    dtype = getattr(torch, dtype_str) if device in ("cuda", "mps") else torch.float32
 
     if device == "cuda":
         model = AutoModelForCausalLM.from_pretrained(
@@ -189,22 +199,31 @@ def _load_model_and_tokenizer(
     return model, tokenizer
 
 
-def _format_and_tokenize(
-    example: dict, tokenizer: AutoTokenizer, max_seq_length: int
-) -> dict:
-    messages = [
-        {"role": "user", "content": example["question"]},
-        {"role": "assistant", "content": example["answer"]},
-    ]
-    text = tokenizer.apply_chat_template(messages, tokenize=False)
-    tokenized = tokenizer(
-        text,
-        max_length=max_seq_length,
-        truncation=True,
-        padding=False,
-    )
-    tokenized["labels"] = tokenized["input_ids"].copy()
-    return tokenized
+def _record_selection(path: Path, dataset, target_format: str):
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    indices = [row["train_index"] for row in rows]
+    if sorted(indices) != list(range(len(dataset))):
+        raise ValueError("Target archive must contain the complete candidate pool with unique indices.")
+    accepted = []
+    for row in sorted(rows, key=lambda row: row["train_index"]):
+        original = dataset[row["train_index"]]
+        if (row["question"], row["gold"]) != (original["question"], original["answer"]):
+            raise ValueError("The target archive does not match the configured training split.")
+        if row["accepted_index"] is not None:
+            accepted.append({"question": row["question"], "answer": row[target_format]})
+    if not accepted:
+        raise ValueError("The target archive contains no accepted examples.")
+    return Dataset.from_list(accepted)
+
+
+def _target_length_summary(dataset) -> dict:
+    lengths = np.array([sum(label != IGNORE_INDEX for label in row) for row in dataset["labels"]])
+    return {
+        "count": len(lengths),
+        "total_supervised_tokens": int(lengths.sum()),
+        "mean": float(lengths.mean()),
+        "percentiles": {str(p): float(np.percentile(lengths, p)) for p in (0, 10, 25, 50, 75, 90, 100)},
+    }
 
 
 def _print_trainable_params(model: Any) -> None:
@@ -227,10 +246,36 @@ def main() -> None:
         default=None,
         help="Path to a checkpoint directory to resume training from",
     )
+    parser.add_argument("--accepted_targets", type=Path)
+    parser.add_argument("--target_format", choices=TARGET_FORMATS)
+    parser.add_argument("--output_dir", type=Path)
+    parser.add_argument("--metadata", type=Path)
+    parser.add_argument("--precision", choices=["float16", "bfloat16"])
+    parser.add_argument("--require_cuda", action="store_true")
     args = parser.parse_args()
+    if (args.accepted_targets is None) != (args.target_format is None):
+        parser.error("--accepted_targets and --target_format must be used together")
+    if args.accepted_targets and args.resume_from_checkpoint:
+        parser.error("Phase 1 arms must start fresh.")
+    if args.require_cuda and not torch.cuda.is_available():
+        parser.error("This run requires CUDA.")
 
     cfg = _load_config(args.config)
+    if args.precision:
+        cfg = replace(
+            cfg,
+            model=replace(cfg.model, dtype=args.precision),
+            training=replace(
+                cfg.training, fp16=args.precision == "float16", bf16=args.precision == "bfloat16",
+            ),
+        )
 
+    output_dir = args.output_dir or Path(cfg.training.output_dir)
+    metadata = args.metadata or output_dir / "training_metadata.json"
+    if not args.dry_run and not args.resume_from_checkpoint and output_dir.exists() and any(output_dir.iterdir()):
+        parser.error("Choose a fresh output directory.")
+    if not args.dry_run and metadata.exists():
+        parser.error("Choose a fresh metadata path.")
     _set_seeds(cfg.training.seed)
 
     print(f"Loading model: {cfg.model.name}")
@@ -268,20 +313,31 @@ def main() -> None:
     train_ds = load_dataset(cfg.data.dataset, "main", split=cfg.data.train_split)
     val_ds = load_dataset(cfg.data.dataset, "main", split=cfg.data.val_split)
 
+    candidate_count = len(train_ds)
+    prompt_date = datetime.now(timezone.utc).strftime("%d %b %Y")
+    if args.accepted_targets:
+        target_meta = json.loads(args.accepted_targets.with_suffix(".metadata.json").read_text())
+        if target_meta["questions"] != candidate_count or target_meta["dataset_fingerprint"] != train_ds._fingerprint:
+            raise ValueError("Target metadata does not match the configured complete candidate pool.")
+        prompt_date = target_meta["prompt_date"]
+        train_ds = _record_selection(args.accepted_targets, train_ds, args.target_format)
+    train_fingerprint = train_ds._fingerprint
+    validation_fingerprint = val_ds._fingerprint
     orig_cols = train_ds.column_names
     train_ds = train_ds.map(
-        lambda ex: _format_and_tokenize(ex, tokenizer, cfg.data.max_seq_length),
+        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date),
         remove_columns=orig_cols,
     )
     val_ds = val_ds.map(
-        lambda ex: _format_and_tokenize(ex, tokenizer, cfg.data.max_seq_length),
-        remove_columns=orig_cols,
+        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date),
+        remove_columns=val_ds.column_names,
     )
 
     training_args = TrainingArguments(
-        output_dir=cfg.training.output_dir,
+        output_dir=str(output_dir),
         num_train_epochs=cfg.training.num_train_epochs,
         per_device_train_batch_size=cfg.training.per_device_train_batch_size,
+        per_device_eval_batch_size=cfg.training.per_device_train_batch_size,
         gradient_accumulation_steps=cfg.training.gradient_accumulation_steps,
         learning_rate=cfg.training.learning_rate,
         lr_scheduler_type=cfg.training.lr_scheduler_type,
@@ -295,6 +351,7 @@ def main() -> None:
         fp16=cfg.training.fp16,
         gradient_checkpointing=cfg.training.gradient_checkpointing,
         report_to="none",
+        average_tokens_across_devices=False,
         resume_from_checkpoint=args.resume_from_checkpoint,
     )
 
@@ -306,7 +363,7 @@ def main() -> None:
         label_pad_token_id=-100,
     )
 
-    trainer = Trainer(
+    trainer = TokenLossTrainer(
         model=model,
         args=training_args,
         train_dataset=train_ds,
@@ -314,16 +371,68 @@ def main() -> None:
         data_collator=data_collator,
     )
 
-    train_result = trainer.train()
+    device = next(model.parameters()).device
+    effective_batch = training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps
+    run_info = {
+        "config": asdict(cfg),
+        "output_dir": str(output_dir),
+        "base_model_revision": getattr(model.config, "_commit_hash", None),
+        "train_fingerprint": train_fingerprint,
+        "validation_fingerprint": validation_fingerprint,
+        "device": str(device),
+        "prompt_date": prompt_date,
+        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+        "model_dtype": str(model.dtype),
+        "versions": {
+            **{name: version(name) for name in ("torch", "transformers", "peft", "accelerate", "datasets")},
+            "python": platform.python_version(),
+            "torch_cuda": torch.version.cuda,
+        },
+        "objective": {
+            "label_mask": "assistant completion including end of turn",
+            "ignore_index": IGNORE_INDEX,
+            "shift_labels": True,
+            "numerator": "cross_entropy_sum",
+            "denominator": "non-ignored shifted targets in the accumulation window",
+            "num_items_in_batch_passed_to": "Trainer.compute_loss_func only",
+            "model_accepts_loss_kwargs": trainer.model_accepts_loss_kwargs,
+            "average_tokens_across_devices": training_args.average_tokens_across_devices,
+        },
+        "gradient_accumulation_steps": training_args.gradient_accumulation_steps,
+        "accelerator_gradient_accumulation_steps": trainer.accelerator.gradient_accumulation_steps,
+        "per_device_train_batch_size": training_args.per_device_train_batch_size,
+        "nominal_effective_batch_size": effective_batch,
+        "last_effective_batch_size_per_epoch": len(train_ds) % effective_batch or effective_batch,
+        "candidate_count": candidate_count,
+        "target_format": args.target_format or "gold",
+        "targets_sha256": hashlib.sha256(args.accepted_targets.read_bytes()).hexdigest() if args.accepted_targets else None,
+        "target_length_tokens": _target_length_summary(train_ds),
+        "status": "started",
+    }
+    metadata.parent.mkdir(parents=True, exist_ok=True)
+    with metadata.open("x") as f:
+        json.dump(run_info, f, indent=2)
+        f.write("\n")
+
+    train_result = trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
     metrics = trainer.evaluate()
 
-    print(f"final train loss: {train_result.training_loss:.4f}")
-    print(f"final val loss:   {metrics['eval_loss']:.4f}")
+    print(f"train token NLL (online): {trainer.training_token_nll:.4f}")
+    print(f"final validation token NLL: {metrics['eval_loss']:.4f}")
 
-    output_dir = Path(cfg.training.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
+    run_info.update(
+        status="completed",
+        train_runtime_s=train_result.metrics["train_runtime"],
+        online_train_token_nll=trainer.training_token_nll,
+        validation=metrics,
+        log_history=trainer.state.log_history,
+    )
+    temporary = metadata.with_suffix(".tmp")
+    temporary.write_text(json.dumps(run_info, indent=2) + "\n")
+    temporary.replace(metadata)
     print(f"Adapter saved to {output_dir}")
 
 
