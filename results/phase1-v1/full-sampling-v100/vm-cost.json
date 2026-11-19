@@ -1,0 +1,20 @@
+{
+  "as_of": "2026-11-18T23:09:29.529000-08:00",
+  "active_vm_hours_by_session": [
+    1.3506705555555556,
+    1.7502813888888888,
+    4.266581666666666
+  ],
+  "combined_hourly_vm_rate_usd": 2.864998,
+  "estimated_vm_cost_usd": 21.10796906076611,
+  "estimated_disk_cost_usd": 0.10374821163166667,
+  "estimated_total_cost_usd": 21.211717272397777,
+  "continuing_disk_usd_per_day": 0.3287664,
+  "excludes": "Credits, discounts, IPv4 free tier, internet egress, and taxes. This is a list-rate estimate, not a billing export.",
+  "price_sources": [
+    "https://cloud.google.com/products/compute/gpus-pricing",
+    "https://cloud.google.com/products/compute/pricing/general-purpose",
+    "https://cloud.google.com/vpc/network-pricing",
+    "https://cloud.google.com/compute/disks-image-pricing"
+  ]
+}
