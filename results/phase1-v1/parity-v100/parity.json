@@ -1,0 +1,38 @@
+{
+  "zeroshot": {
+    "archived_accuracy": 0.7558756633813495,
+    "batched_accuracy": 0.7422289613343442,
+    "accuracy_delta": -0.013646702047005308,
+    "replay_exact_token_sequences": 122,
+    "replay_size": 128,
+    "replay_exact_token_sequence_rate": 0.953125,
+    "archive_exact_decoded_text_count": 374,
+    "full_size": 1319,
+    "batched_wall_seconds": 1830.6537934809999,
+    "serial_wall_seconds": 771.7050820189997,
+    "gpu_name": "Tesla V100-SXM2-16GB",
+    "prompt_date": "18 Nov 2026",
+    "model_dtype": "torch.float16",
+    "model_revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+    "batch_size": 8,
+    "passed": false
+  },
+  "fewshot5": {
+    "archived_accuracy": 0.7028051554207733,
+    "batched_accuracy": 0.7149355572403336,
+    "accuracy_delta": 0.012130401819560273,
+    "replay_exact_token_sequences": 126,
+    "replay_size": 128,
+    "replay_exact_token_sequence_rate": 0.984375,
+    "archive_exact_decoded_text_count": 776,
+    "full_size": 1319,
+    "batched_wall_seconds": 1154.6661763289999,
+    "serial_wall_seconds": 411.4738667219999,
+    "gpu_name": "Tesla V100-SXM2-16GB",
+    "prompt_date": "18 Nov 2026",
+    "model_dtype": "torch.float16",
+    "model_revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+    "batch_size": 8,
+    "passed": false
+  }
+}

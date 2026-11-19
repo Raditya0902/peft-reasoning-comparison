@@ -118,4 +118,6 @@ python -m src.phase1_results --run_dir "$run" --parity_dir "$run/parity"
 
 ### Execution status
 
-GCP rejected the instance lookup because billing is disabled on the historical V100 project. No accessible alternative V100 surfaced in the configured GCP projects, and the RunPod lookup failed at DNS. The local machine has no CUDA device. The evaluator gate has no measured outcome, sampling and training await the gate, and Phase 1 GPU-hours remain unspent. The Phase 0 tables contain the available reference evidence.
+Billing was restored and the parity suite ran on a new V100. The BF16 attempt was stopped for throughput before calculating a test score. The FP16 run used one frozen prompt date and the same runtime for serial and batched inference. The [BF16 preflight timing](../results/phase1-v1/smoke_bfloat16.metadata.json) and [FP16 preflight timing](../results/phase1-v1/smoke_float16_native.metadata.json) come from the same non-test questions.
+
+**The evaluator gate failed.** Both conditions met the raw token-sequence agreement threshold against their serial replays. Both exceeded the permitted absolute accuracy drift from the archive. This comparison cannot isolate the source of drift because the historical prompts and runtime were incompletely recorded. The rejection-sampling pilot and training arms stayed off. The VM is stopped. [Parity results](../results/phase1-v1/parity-v100/parity.json) · [Runtime versions](../results/phase1-v1/parity-v100/runtime.json) · [VM status](../results/phase1-v1/parity-v100/vm-status.yaml)
