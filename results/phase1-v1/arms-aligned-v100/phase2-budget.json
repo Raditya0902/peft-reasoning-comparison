@@ -1,0 +1,23 @@
+{
+  "phase1_measured_training_gpu_hours_by_arm": {
+    "gold": 0.33920969444444443,
+    "stripped": 0.30937136111111113,
+    "self_generated": 0.4138668333333333
+  },
+  "phase1_mean_validation_decode_gpu_hours": 0.136322832641574,
+  "phase1_mean_test_decode_gpu_hours": 0.36069659863259257,
+  "phase2_estimated_gpu_hours_by_component": {
+    "six_one_epoch_sweep_trainings": 1.0863758838130921,
+    "six_validation_decodes": 0.817936995849444,
+    "nine_two_epoch_trainings": 3.4574609735989354,
+    "nine_adapter_test_decodes": 3.2462693876933333,
+    "two_base_test_decodes": 0.8292555471694444
+  },
+  "phase2_estimated_gpu_hours": 9.437298788124249,
+  "assumptions": [
+    "Scale measured aligned gold training time from the matched subset to the full candidate count.",
+    "Scale DoRA and IA3 using historical relative training times.",
+    "Use Phase 1 adapter decodes and batched Instruct baselines as proxies for Base.",
+    "Exclude setup, idle time, and the optional IA3 epoch curve."
+  ]
+}

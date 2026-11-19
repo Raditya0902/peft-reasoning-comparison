@@ -1,0 +1,29 @@
+{
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "adapter": "adapters/phase1-v1-aligned/stripped",
+  "dataset": "gsm8k",
+  "split": "test",
+  "output": "results/phase1-v1/arms-aligned-v100/stripped_probe_no_date.jsonl",
+  "few_shot": 0,
+  "seed": 42,
+  "batch_size": 8,
+  "subset_size": 200,
+  "dtype": "float16",
+  "require_cuda": true,
+  "prompt_date": "18 Nov 2026",
+  "revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+  "omit_prompt_date": true,
+  "adapter_sha256": "788f79c17949d75fb2f32b48f8f62145229eb26bb01968ea73d6a85a97ad6bdc",
+  "model_revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+  "dataset_fingerprint": "1c3f6ad10644780a",
+  "device": "cuda:0",
+  "gpu_name": "Tesla V100-SXM2-16GB",
+  "model_dtype": "torch.float16",
+  "versions": {
+    "torch": "2.9.1+cu129",
+    "transformers": "4.57.6",
+    "datasets": "4.8.5"
+  },
+  "examples": 200,
+  "wall_seconds": 119.75604175199987
+}

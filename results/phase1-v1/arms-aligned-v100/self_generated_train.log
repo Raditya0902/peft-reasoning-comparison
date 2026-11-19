@@ -1,0 +1,56 @@
+Loading model: meta-llama/Llama-3.2-3B-Instruct
+`torch_dtype` is deprecated! Use `dtype` instead!
+Trainable params: 4,587,520 / 3,217,337,344 (0.14%)
+Loading dataset: gsm8k / train=train[:6000], val=train[6000:6500]
+Using the latest cached version of the dataset since gsm8k couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'main' at /home/adityarallapalli7/.cache/huggingface/datasets/gsm8k/main/0.0.0/740312add88f781978c0658806c59bc2815b9866 (last modified on Thu Nov 19 07:27:37 2026).
+Using the latest cached version of the dataset since gsm8k couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'main' at /home/adityarallapalli7/.cache/huggingface/datasets/gsm8k/main/0.0.0/740312add88f781978c0658806c59bc2815b9866 (last modified on Thu Nov 19 07:27:37 2026).
+The model is already on multiple devices. Skipping the move to device specified in `args`.
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+{'loss': 0.20136498185499413, 'grad_norm': 0.2009482979774475, 'learning_rate': 0.00010857142857142856, 'epoch': 0.06}
+{'loss': 0.19194061246019664, 'grad_norm': 0.23640556633472443, 'learning_rate': 0.00019998181950333822, 'epoch': 0.12}
+{'loss': 0.17995428049352932, 'grad_norm': 0.16287477314472198, 'learning_rate': 0.00019934619596497416, 'epoch': 0.17}
+{'loss': 0.18611412838275593, 'grad_norm': 0.17196820676326752, 'learning_rate': 0.00019780814740629355, 'epoch': 0.23}
+{'loss': 0.18350094149121846, 'grad_norm': 0.1659708470106125, 'learning_rate': 0.00019538164490578947, 'epoch': 0.29}
+{'loss': 0.1836589991407351, 'grad_norm': 0.1391555666923523, 'learning_rate': 0.00019208872993718967, 'epoch': 0.35}
+{'loss': 0.19015507318672265, 'grad_norm': 0.16774971783161163, 'learning_rate': 0.00018795931415265736, 'epoch': 0.4}
+{'loss': 0.1857840480711442, 'grad_norm': 0.14757144451141357, 'learning_rate': 0.00018303090767612883, 'epoch': 0.46}
+{'loss': 0.18486056790616673, 'grad_norm': 0.1523546427488327, 'learning_rate': 0.00017734827837487388, 'epoch': 0.52}
+{'loss': 0.1799392250228102, 'grad_norm': 0.15404057502746582, 'learning_rate': 0.00017096304520433227, 'epoch': 0.58}
+{'loss': 0.1778367259722938, 'grad_norm': 0.15187697112560272, 'learning_rate': 0.0001639332093201365, 'epoch': 0.64}
+{'loss': 0.18392696281134963, 'grad_norm': 0.14512354135513306, 'learning_rate': 0.00015632262721652869, 'epoch': 0.69}
+{'loss': 0.18061794802775696, 'grad_norm': 0.16338852047920227, 'learning_rate': 0.00014820043067699341, 'epoch': 0.75}
+{'loss': 0.1808972088478849, 'grad_norm': 0.13488858938217163, 'learning_rate': 0.0001396403988060652, 'epoch': 0.81}
+{'loss': 0.18750054631537016, 'grad_norm': 0.15027198195457458, 'learning_rate': 0.00013072028784654732, 'epoch': 0.87}
+{'loss': 0.16979069322175475, 'grad_norm': 0.17686334252357483, 'learning_rate': 0.00012152112486984071, 'epoch': 0.92}
+{'loss': 0.18358967675029483, 'grad_norm': 0.10829189419746399, 'learning_rate': 0.00011212647175524551, 'epoch': 0.98}
+{'eval_loss': 1.0855214939464437, 'eval_runtime': 17.7247, 'eval_samples_per_second': 28.209, 'eval_steps_per_second': 7.052, 'epoch': 1.0}
+/home/adityarallapalli7/peft-phase1/venv/lib/python3.10/site-packages/peft/utils/save_and_load.py:372: UserWarning: Could not find a config file in meta-llama/Llama-3.2-3B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+{'loss': 0.17569055548648121, 'grad_norm': 0.12827879190444946, 'learning_rate': 0.00010262166614398143, 'epoch': 1.04}
+{'loss': 0.1668817743128208, 'grad_norm': 0.15228484570980072, 'learning_rate': 9.309304626282748e-05, 'epoch': 1.1}
+{'loss': 0.17079682684635664, 'grad_norm': 0.12510798871517181, 'learning_rate': 8.362716665880288e-05, 'epoch': 1.15}
+{'loss': 0.16533634676765308, 'grad_norm': 0.16599547863006592, 'learning_rate': 7.431001196887345e-05, 'epoch': 1.21}
+{'loss': 0.1704674553477423, 'grad_norm': 0.12916840612888336, 'learning_rate': 6.522621586651485e-05, 'epoch': 1.27}
+{'loss': 0.16866881094594996, 'grad_norm': 0.13644179701805115, 'learning_rate': 5.645829227994146e-05, 'epoch': 1.33}
+{'loss': 0.17195751040377055, 'grad_norm': 0.14724920690059662, 'learning_rate': 4.8085885865336454e-05, 'epoch': 1.38}
+{'loss': 0.17295384726783702, 'grad_norm': 0.15553799271583557, 'learning_rate': 4.018504854351495e-05, 'epoch': 1.44}
+{'loss': 0.16801939652830641, 'grad_norm': 0.1710539013147354, 'learning_rate': 3.2827548671698904e-05, 'epoch': 1.5}
+{'loss': 0.17217257268137506, 'grad_norm': 0.15716010332107544, 'learning_rate': 2.6080219125639706e-05, 'epoch': 1.56}
+{'loss': 0.1732391495151154, 'grad_norm': 0.15404634177684784, 'learning_rate': 2.0004350213874567e-05, 'epoch': 1.62}
+{'loss': 0.16638664516065885, 'grad_norm': 0.16192859411239624, 'learning_rate': 1.4655132938664606e-05, 'epoch': 1.67}
+{'loss': 0.16869983720621, 'grad_norm': 0.1517137885093689, 'learning_rate': 1.0081157660832086e-05, 'epoch': 1.73}
+{'loss': 0.16196254540339075, 'grad_norm': 0.14111927151679993, 'learning_rate': 6.323972722444216e-06, 'epoch': 1.79}
+{'loss': 0.16101944200290016, 'grad_norm': 0.15006481111049652, 'learning_rate': 3.4177070366558818e-06, 'epoch': 1.85}
+{'loss': 0.17111357673732946, 'grad_norm': 0.15214377641677856, 'learning_rate': 1.3887600729693307e-06, 'epoch': 1.9}
+{'loss': 0.17216667819164372, 'grad_norm': 0.17043855786323547, 'learning_rate': 2.555620539727799e-07, 'epoch': 1.96}
+{'eval_loss': 1.1093284418304497, 'eval_runtime': 17.695, 'eval_samples_per_second': 28.257, 'eval_steps_per_second': 7.064, 'epoch': 2.0}
+/home/adityarallapalli7/peft-phase1/venv/lib/python3.10/site-packages/peft/utils/save_and_load.py:372: UserWarning: Could not find a config file in meta-llama/Llama-3.2-3B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+{'train_runtime': 1489.9206, 'train_samples_per_second': 7.435, 'train_steps_per_second': 0.466, 'train_loss': 0.17646568854892744, 'epoch': 2.0}
+train token NLL (online): 0.1765
+final validation token NLL: 1.1093
+/home/adityarallapalli7/peft-phase1/venv/lib/python3.10/site-packages/peft/utils/save_and_load.py:372: UserWarning: Could not find a config file in meta-llama/Llama-3.2-3B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+Adapter saved to adapters/phase1-v1-aligned/self_generated

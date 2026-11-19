@@ -110,7 +110,7 @@ def phase2_from_completed_arms(run_dir: Path, parity: Path, train_history: Path)
     }
     return {
         "phase1_measured_training_gpu_hours_by_arm": {
-            arm: entry["train_runtime_s"] / HOUR for arm, entry in train.items(),
+            arm: entry["train_runtime_s"] / HOUR for arm, entry in train.items()
         },
         "phase1_mean_validation_decode_gpu_hours": valid_h,
         "phase1_mean_test_decode_gpu_hours": test_h,

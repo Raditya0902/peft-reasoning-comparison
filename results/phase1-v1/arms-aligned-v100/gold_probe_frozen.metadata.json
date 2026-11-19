@@ -1,0 +1,29 @@
+{
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "adapter": "adapters/phase1-v1-aligned/gold",
+  "dataset": "gsm8k",
+  "split": "test",
+  "output": "results/phase1-v1/arms-aligned-v100/gold_probe_frozen.jsonl",
+  "few_shot": 0,
+  "seed": 42,
+  "batch_size": 8,
+  "subset_size": 200,
+  "dtype": "float16",
+  "require_cuda": true,
+  "prompt_date": "18 Nov 2026",
+  "revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+  "omit_prompt_date": false,
+  "adapter_sha256": "2b42c8ca9e327274539dbb7d072bae6322d8a429e8b517dd46045ec3e75d5ad8",
+  "model_revision": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+  "dataset_fingerprint": "1c3f6ad10644780a",
+  "device": "cuda:0",
+  "gpu_name": "Tesla V100-SXM2-16GB",
+  "model_dtype": "torch.float16",
+  "versions": {
+    "torch": "2.9.1+cu129",
+    "transformers": "4.57.6",
+    "datasets": "4.8.5"
+  },
+  "examples": 200,
+  "wall_seconds": 147.95953119000023
+}

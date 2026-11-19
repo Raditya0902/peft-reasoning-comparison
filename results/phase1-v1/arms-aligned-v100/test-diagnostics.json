@@ -1,0 +1,20 @@
+{
+  "gold": {
+    "examples": 1319,
+    "extraction_failures": 4,
+    "outputs_at_token_cap": 4,
+    "extraction_failures_at_token_cap": 4
+  },
+  "stripped": {
+    "examples": 1319,
+    "extraction_failures": 4,
+    "outputs_at_token_cap": 4,
+    "extraction_failures_at_token_cap": 4
+  },
+  "self_generated": {
+    "examples": 1319,
+    "extraction_failures": 85,
+    "outputs_at_token_cap": 13,
+    "extraction_failures_at_token_cap": 13
+  }
+}

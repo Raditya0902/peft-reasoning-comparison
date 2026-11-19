@@ -1,0 +1,3 @@
+2026-11-19T10:31:04Z phase1_exit=0; scheduling VM shutdown in two minutes
+Shutdown scheduled for Thu 2026-11-19 10:33:04 UTC, use 'shutdown -c' to cancel.
+2026-11-19T10:31:04Z shutdown_command_exit=0
