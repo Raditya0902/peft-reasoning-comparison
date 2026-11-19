@@ -1,5 +1,7 @@
 # A Controlled Comparison of LoRA, DoRA, and IA3 for Multi-Step Mathematical Reasoning
 
+> **Superseded report.** The [audit](phase0_audit.md) and the [Phase 1 results](../results/phase1-v1/arms-aligned-v100/report_tables.md) supersede this historical report.
+
 ## Abstract
 
 We evaluate three parameter-efficient fine-tuning methods—LoRA, DoRA, and IA3—against zero-shot and 5-shot in-context learning baselines on the GSM8K grade-school mathematics benchmark, using a fixed compute budget of 6,000 training examples and 2 epochs on a V100 GPU. Under this budget, all three PEFT methods underperformed the zero-shot baseline (0.7559 accuracy), with LoRA reaching 0.6399, DoRA 0.6338, and IA3 0.6975, suggesting underfitting rather than a fundamental limitation of the adaptation approach. IA3 achieved the best accuracy among adapters, while also being the most parameter-efficient solution at 1.10 MB versus 17–18 MB for LoRA and DoRA.
