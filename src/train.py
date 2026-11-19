@@ -33,6 +33,7 @@ TARGET_FORMATS = ("gold", "stripped", "self_generated")
 class ModelConfig:
     name: str
     dtype: str
+    revision: str | None = None
 
 
 @dataclass(frozen=True)
@@ -130,6 +131,7 @@ def _load_config(path: str) -> TrainConfig:
         model=ModelConfig(
             name=_require(m, "name", "model"),
             dtype=_require(m, "dtype", "model"),
+            revision=m.get("revision"),
         ),
         data=DataConfig(
             dataset=_require(d, "dataset", "data"),
@@ -177,9 +179,9 @@ def _get_device() -> str:
 
 
 def _load_model_and_tokenizer(
-    model_id: str, dtype_str: str
+    model_id: str, dtype_str: str, revision: str | None = None
 ) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.truncation_side = "left"
@@ -190,10 +192,10 @@ def _load_model_and_tokenizer(
 
     if device == "cuda":
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, torch_dtype=dtype, device_map="auto"
+            model_id, torch_dtype=dtype, device_map="auto", revision=revision
         )
     else:
-        model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype)
+        model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype, revision=revision)
         model = model.to(device)
 
     return model, tokenizer
@@ -279,7 +281,7 @@ def main() -> None:
     _set_seeds(cfg.training.seed)
 
     print(f"Loading model: {cfg.model.name}")
-    model, tokenizer = _load_model_and_tokenizer(cfg.model.name, cfg.model.dtype)
+    model, tokenizer = _load_model_and_tokenizer(cfg.model.name, cfg.model.dtype, cfg.model.revision)
 
     if cfg.lora is not None:
         peft_config = LoraConfig(

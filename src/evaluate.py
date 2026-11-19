@@ -32,8 +32,9 @@ def _get_device() -> str:
 
 def _load_model_and_tokenizer(
     model_id: str, dtype_name: str | None = None, require_cuda: bool = False,
+    *, device: str | None = None,
 ) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
-    device = _get_device()
+    device = device or _get_device()
     if require_cuda and device != "cuda":
         raise RuntimeError("This run requires CUDA.")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -57,6 +58,16 @@ def _load_model_and_tokenizer(
     model.eval()
     model.generation_config.top_p = None
     return model, tokenizer
+
+
+
+def _load_eval_adapter(model, path: str):
+    from peft import PeftModel
+
+    weights = Path(path) / "adapter_model.safetensors"
+    checksum = hashlib.sha256(weights.read_bytes()).hexdigest() if weights.is_file() else None
+    merged = PeftModel.from_pretrained(model, path).merge_and_unload()
+    return merged.eval(), checksum
 
 
 def _load_few_shot_examples(n: int, seed: int) -> list[dict]:
@@ -242,15 +253,8 @@ def main() -> None:
 
     adapter_sha256 = None
     if args.adapter is not None:
-        from peft import PeftModel
-
         print(f"Loading adapter: {args.adapter}")
-        adapter_weights = Path(args.adapter) / "adapter_model.safetensors"
-        if adapter_weights.is_file():
-            adapter_sha256 = hashlib.sha256(adapter_weights.read_bytes()).hexdigest()
-        model = PeftModel.from_pretrained(model, args.adapter)
-        model = model.merge_and_unload()
-        model = model.eval()
+        model, adapter_sha256 = _load_eval_adapter(model, args.adapter)
 
     print(f"Loading dataset: {args.dataset} / {args.split}")
     dataset = load_dataset(args.dataset, "main", split=args.split)
