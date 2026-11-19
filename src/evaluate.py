@@ -117,6 +117,7 @@ def _generate_batch(
     *,
     sample: bool = False,
     num_return_sequences: int = 1,
+    max_new_tokens: int = MAX_NEW_TOKENS,
 ) -> list[Generation]:
     inputs = tokenizer(
         prompts,
@@ -131,7 +132,7 @@ def _generate_batch(
     with torch.inference_mode():
         outputs = model.generate(
             **inputs,
-            max_new_tokens=MAX_NEW_TOKENS,
+            max_new_tokens=max_new_tokens,
             do_sample=sample,
             num_return_sequences=num_return_sequences,
             pad_token_id=tokenizer.pad_token_id,

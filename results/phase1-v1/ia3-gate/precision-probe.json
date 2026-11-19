@@ -1,0 +1,1500 @@
+{
+  "scope": "Historical 10-epoch outputs at most 10 tokens. Frozen prompt, actual final IA3 adapter, CPU, and one decoded token.",
+  "questions": 106,
+  "adapter_sha256": "829c76484646a742de7e0078c2ce1229fadc32f3469ee8ffb3028559116b7075",
+  "first_token_differences": 4,
+  "answer_marker_first_token_counts": {
+    "float16": 20,
+    "bfloat16": 21
+  },
+  "outcomes": {
+    "float16": [
+      {
+        "id": "gsm8k-6",
+        "first_output_token_ids": [
+          4873
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-11",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-19",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-48",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-57",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-67",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-71",
+        "first_output_token_ids": [
+          791
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-95",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-145",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-149",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-162",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-177",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-187",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-188",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-198",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-218",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-221",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-225",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-238",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-239",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-240",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-254",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-259",
+        "first_output_token_ids": [
+          12834
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-264",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-289",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-312",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-316",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-325",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-329",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-336",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-363",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-374",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-375",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-382",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-396",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-397",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-399",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-418",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-452",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-536",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-537",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-547",
+        "first_output_token_ids": [
+          644
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-548",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-565",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-573",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-583",
+        "first_output_token_ids": [
+          41
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-593",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-613",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-637",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-644",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-651",
+        "first_output_token_ids": [
+          644
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-681",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-685",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-704",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-729",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-732",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-738",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-739",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-753",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-784",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-788",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-796",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-818",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-828",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-834",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-844",
+        "first_output_token_ids": [
+          12834
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-847",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-850",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-915",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-938",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-945",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-955",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-957",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-967",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-972",
+        "first_output_token_ids": [
+          50329
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-996",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1005",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1008",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1016",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1027",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1045",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1052",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1095",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1098",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1104",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1114",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1120",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1134",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1136",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1142",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1144",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1152",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1153",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1154",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1158",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1164",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1216",
+        "first_output_token_ids": [
+          791
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1229",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1241",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1258",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1259",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1268",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1269",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1281",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1287",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1291",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      }
+    ],
+    "bfloat16": [
+      {
+        "id": "gsm8k-6",
+        "first_output_token_ids": [
+          4873
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-11",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-19",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-48",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-57",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-67",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-71",
+        "first_output_token_ids": [
+          791
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-95",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-145",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-149",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-162",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-177",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-187",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-188",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-198",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-218",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-221",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-225",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-238",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-239",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-240",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-254",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-259",
+        "first_output_token_ids": [
+          12834
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-264",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-289",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-312",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-316",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-325",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-329",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-336",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-363",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-374",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-375",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-382",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-396",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-397",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-399",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-418",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-452",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-536",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-537",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-547",
+        "first_output_token_ids": [
+          644
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-548",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-565",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-573",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-583",
+        "first_output_token_ids": [
+          41
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-593",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-613",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-637",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-644",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-651",
+        "first_output_token_ids": [
+          644
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-681",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-685",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-704",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-729",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-732",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-738",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-739",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-753",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-784",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-788",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-796",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-818",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-828",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-834",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-844",
+        "first_output_token_ids": [
+          12834
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-847",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-850",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-915",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-938",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-945",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-955",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-957",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-967",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-972",
+        "first_output_token_ids": [
+          50329
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-996",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1005",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1008",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1016",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1027",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1045",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1052",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1095",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1098",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1104",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1114",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1120",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1134",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1136",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1142",
+        "first_output_token_ids": [
+          827
+        ],
+        "starts_with_answer_marker": true
+      },
+      {
+        "id": "gsm8k-1144",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1152",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1153",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1154",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1158",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1164",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1216",
+        "first_output_token_ids": [
+          791
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1229",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1241",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1258",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1259",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1268",
+        "first_output_token_ids": [
+          10267
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1269",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1281",
+        "first_output_token_ids": [
+          5451
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1287",
+        "first_output_token_ids": [
+          1271
+        ],
+        "starts_with_answer_marker": false
+      },
+      {
+        "id": "gsm8k-1291",
+        "first_output_token_ids": [
+          8468
+        ],
+        "starts_with_answer_marker": false
+      }
+    ]
+  }
+}

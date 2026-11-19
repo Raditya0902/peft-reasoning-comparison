@@ -1,0 +1,20 @@
+{
+  "device": "cpu",
+  "dtype": "torch.float16",
+  "padding_side": "left",
+  "padding_rows": 42,
+  "batch_size": 8,
+  "examples": 50,
+  "input_ids_exact": 50,
+  "output_ids_exact": 50,
+  "first_output_id_exact": 50,
+  "extracted_answer_exact": 50,
+  "adapter_sha256": "d00d9eebdb76c69610bcc343c4aeaab9f1297b29cd34dcad337af6ab5dc37d9f",
+  "max_new_tokens": 512,
+  "wall_seconds": 2248.60473666701,
+  "versions": {
+    "torch": "2.15.0",
+    "transformers": "4.57.6",
+    "peft": "0.19.1"
+  }
+}
