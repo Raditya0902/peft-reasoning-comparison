@@ -1,0 +1,6 @@
+{
+  "creationTimestamp": "2026-11-18T15:35:04.439-08:00",
+  "name": "peft-phase1-parity",
+  "sizeGb": "100",
+  "type": "https://www.googleapis.com/compute/v1/projects/dllm-refactor-2026/zones/us-central1-a/diskTypes/pd-balanced"
+}

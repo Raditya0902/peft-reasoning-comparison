@@ -1,0 +1,59 @@
+{
+  "sampling_pilot": {
+    "questions": 200,
+    "accepted": 185,
+    "acceptance_rate": 0.925,
+    "samples_per_question": 2,
+    "measured_seconds": 494.76826243399955,
+    "projected_questions": 6000,
+    "projected_samples": 12000,
+    "projected_accepted": 5550.0,
+    "projected_full_sampling_gpu_hours": 4.123068853616663
+  },
+  "phase1_remaining": {
+    "estimated_training_gpu_hours_per_arm": {
+      "gold": 1.7011323454946488,
+      "stripped": 1.510221870342239,
+      "self_generated": 2.2394025263838464
+    },
+    "estimated_validation_and_test_gpu_hours_per_arm": 0.47598353244221253,
+    "estimated_gpu_hours": 11.001776193164034,
+    "estimated_gpu_hours_raw_gold_and_teacher_only": 9.015570790379583
+  },
+  "phase2": {
+    "estimated_gpu_hours_by_component": {
+      "one_epoch_sweep_training": 5.534583333333333,
+      "six_validation_decodes": 0.8804337988254989,
+      "nine_full_trainings": 17.61416666666667,
+      "nine_adapter_decodes": 3.4838765419524993,
+      "two_base_reference_decodes": 0.8292555471694444
+    },
+    "estimated_total_gpu_hours": 28.342315887947446
+  },
+  "assumptions": [
+    "Sampling scales with questions at unchanged batch size and draws per question.",
+    "Training uses historical two-epoch runtimes. Phase 1 scales the LoRA runtime by projected total input tokens, including the prompt, with observed acceptance and target lengths. Padding, hardware precision and optimizer differences can affect runtime.",
+    "Phase 1 evaluation uses measured LoRA reference time and scales validation by question count. Phase 2 uses current Instruct inference times as proxies for Base, which may produce different response lengths.",
+    "The totals exclude setup, VM idle time and prior GPU measurements. They include no optional IA3 epoch curve."
+  ],
+  "vm_cost": {
+    "as_of": "2026-11-18T18:46:53.692000-08:00",
+    "active_vm_hours_by_session": [
+      1.3506705555555556,
+      1.7502813888888888
+    ],
+    "combined_hourly_vm_rate_usd": 2.864998,
+    "estimated_vm_cost_usd": 8.884221118929444,
+    "estimated_disk_cost_usd": 0.043794625873833336,
+    "estimated_total_cost_usd": 8.928015744803277,
+    "continuing_disk_usd_per_day": 0.3287664,
+    "excludes": "Credits, discounts, IPv4 free tier, internet egress, and taxes. This is a list-rate estimate, not a billing export.",
+    "price_sources": [
+      "https://cloud.google.com/products/compute/gpus-pricing",
+      "https://cloud.google.com/products/compute/pricing/general-purpose",
+      "https://cloud.google.com/vpc/network-pricing",
+      "https://cloud.google.com/compute/disks-image-pricing"
+    ]
+  },
+  "phase1_total_including_vm_time_to_date_gpu_hours": 14.102728137608478
+}
