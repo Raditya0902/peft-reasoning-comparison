@@ -1,6 +1,7 @@
 """CLI for running model evaluation on GSM8K and writing predictions as JSONL."""
 
 import argparse
+import hashlib
 import json
 import random
 import time
@@ -239,10 +240,14 @@ def main() -> None:
     print(f"Loading model: {args.model}")
     model, tokenizer = _load_model_and_tokenizer(args.model, args.dtype, args.require_cuda)
 
+    adapter_sha256 = None
     if args.adapter is not None:
         from peft import PeftModel
 
         print(f"Loading adapter: {args.adapter}")
+        adapter_weights = Path(args.adapter) / "adapter_model.safetensors"
+        if adapter_weights.is_file():
+            adapter_sha256 = hashlib.sha256(adapter_weights.read_bytes()).hexdigest()
         model = PeftModel.from_pretrained(model, args.adapter)
         model = model.merge_and_unload()
         model = model.eval()
@@ -282,6 +287,7 @@ def main() -> None:
     with metadata_path.open("x") as f:
         json.dump({
             **vars(args),
+            "adapter_sha256": adapter_sha256,
             "model_revision": getattr(model.config, "_commit_hash", None),
             "dataset_fingerprint": dataset._fingerprint,
             "device": str(device),

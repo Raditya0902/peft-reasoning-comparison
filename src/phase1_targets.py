@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 from src.evaluate import _generate_batch, _load_model_and_tokenizer, _render_prompt
 from src.extract_answer import extract_answer
+from src.phase1_parity import approved_for_phase1
 
 MODEL = "meta-llama/Llama-3.2-3B-Instruct"
 CANDIDATE_SPLIT = "train[:6000]"
@@ -58,6 +59,7 @@ def main():
     parser.add_argument("--parity", type=Path, required=True)
     parser.add_argument("--batch_size", type=int, required=True)
     parser.add_argument("--dtype", choices=["float16", "bfloat16"], required=True)
+    parser.add_argument("--accept_archive_drift", action="store_true")
     parser.add_argument("--subset_size", type=int, help="Run a timing pilot only")
     args = parser.parse_args()
     if args.batch_size < 1 or (args.subset_size is not None and args.subset_size < 1):
@@ -65,8 +67,8 @@ def main():
     if args.output.exists() or args.output.with_suffix(".metadata.json").exists():
         parser.error("Choose a new output path.")
     gate = json.loads(args.parity.read_text())
-    if not all(gate[name]["passed"] for name in ("zeroshot", "fewshot5")):
-        parser.error("Both baseline parity checks must pass.")
+    if not approved_for_phase1(gate, args.accept_archive_drift):
+        parser.error("Both serial-equivalence checks must pass, with explicit approval for archive drift.")
 
     reference = gate["zeroshot"]
     if reference["model_dtype"] != f"torch.{args.dtype}":
@@ -105,6 +107,7 @@ def main():
             "dataset_fingerprint": dataset._fingerprint,
             "split": CANDIDATE_SPLIT,
             "seed": SEED,
+            "archive_drift_accepted": args.accept_archive_drift,
             "prompt_date": prompt_date,
             "dtype": args.dtype,
             "batch_size": args.batch_size,

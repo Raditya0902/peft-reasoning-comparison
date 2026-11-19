@@ -77,6 +77,17 @@ def compare(archive: Path, batched: Path, serial: Path, few_shot: int) -> dict:
     }
 
 
+def approved_for_phase1(gate: dict, accept_archive_drift: bool = False) -> bool:
+    """Allow the dated deviation only when both serial-equivalence checks passed."""
+    for name in ("zeroshot", "fewshot5"):
+        result = gate[name]
+        if result["passed"]:
+            continue
+        if not accept_archive_drift or result["replay_exact_token_sequence_rate"] < MIN_EXACT_TOKEN_MATCH:
+            return False
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run_dir", type=Path, required=True)

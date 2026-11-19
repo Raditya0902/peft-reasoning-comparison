@@ -190,3 +190,26 @@ def test_rejection_sampling_keeps_first_correct_draw_and_strips_only_annotations
     assert row["stripped"] == "2 + 2 = 4\n#### 4"
     assert _candidate_row(0, gold, [make("#### 4"), make("Correct. #### 4")])["accepted_index"] == 0
     assert _candidate_row(0, gold, [make("#### 5"), make("No match")])["self_generated"] is None
+
+
+def test_archive_drift_requires_explicit_approval_and_serial_equivalence():
+    from src.phase1_parity import approved_for_phase1
+
+    gate = {
+        "zeroshot": {"passed": False, "replay_exact_token_sequence_rate": 0.953125},
+        "fewshot5": {"passed": False, "replay_exact_token_sequence_rate": 0.984375},
+    }
+    assert not approved_for_phase1(gate)
+    assert approved_for_phase1(gate, accept_archive_drift=True)
+    gate["fewshot5"]["replay_exact_token_sequence_rate"] = 0.94
+    assert not approved_for_phase1(gate, accept_archive_drift=True)
+
+
+def test_reference_pairs_align_ids_and_validate_question_identity():
+    from src.phase1_reference import _pairs
+
+    one = {"id": "one", "question": "First", "gold_answer": 1, "correct": True}
+    two = {"id": "two", "question": "Second", "gold_answer": 2, "correct": False}
+    assert _pairs([one, two], [{**two, "correct": True}, one]) == (2, 1, 2, 0, 1)
+    with pytest.raises(ValueError, match="Unmatched question"):
+        _pairs([one, two], [one, {**two, "question": "Different"}])

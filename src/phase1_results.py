@@ -5,6 +5,8 @@ import json
 from itertools import combinations
 from pathlib import Path
 
+from src.phase1_parity import approved_for_phase1
+from src.phase1_reference import check_zero_shot_prompts
 from src.report_tables import (
     _build_main_results_table,
     _holm_adjust,
@@ -14,24 +16,33 @@ from src.report_tables import (
 )
 
 ARMS = ("gold", "stripped", "self_generated")
-REFERENCES = ("archived_lora_reference", "instruct_zeroshot_reference")
+REFERENCES = ("same_pipeline_lora_reference", "instruct_zeroshot_reference")
 BINS = ((0, 99), (100, 149), (150, 199), (200, None))
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run_dir", type=Path, required=True)
-    parser.add_argument("--archive_dir", type=Path, default=Path("results/predictions"))
+    parser.add_argument("--reference_dir", type=Path, required=True)
+    parser.add_argument("--accept_archive_drift", action="store_true")
     parser.add_argument("--parity_dir", type=Path, required=True)
     args = parser.parse_args()
     gate = json.loads((args.parity_dir / "parity.json").read_text())
-    if not all(gate[name]["passed"] for name in ("zeroshot", "fewshot5")):
-        raise ValueError("Both parity conditions must pass.")
+    if not approved_for_phase1(gate, args.accept_archive_drift):
+        raise ValueError("Both serial-equivalence checks must pass, with explicit approval for archive drift.")
     files = {arm: args.run_dir / f"{arm}_test.jsonl" for arm in ARMS}
     files.update(zip(REFERENCES, (
-        args.archive_dir / "lora_full.jsonl", args.parity_dir / "zeroshot_batched.jsonl",
+        args.reference_dir / "lora_reference.jsonl", args.parity_dir / "zeroshot_batched.jsonl",
     ), strict=True))
+    common_fields = ("model", "model_revision", "dataset_fingerprint", "gpu_name", "model_dtype",
+                     "batch_size", "seed", "split", "prompt_date", "few_shot", "versions")
+    first = json.loads(files[REFERENCES[1]].with_suffix(".metadata.json").read_text())
+    for name, path in files.items():
+        observed = json.loads(path.with_suffix(".metadata.json").read_text())
+        if any(observed[field] != first[field] for field in common_fields):
+            raise ValueError(f"{name} used a different evaluation pipeline.")
     records, _ = _rescore_runs(Path("."), {name: p.resolve() for name, p in files.items()}, 1319)
+    check_zero_shot_prompts(records[REFERENCES[1]], {name: records[name] for name in (*ARMS, REFERENCES[0])})
     metadata = {arm: json.loads((args.run_dir / f"{arm}_training.json").read_text()) for arm in ARMS}
     if not all(entry["status"] == "completed" and entry["target_format"] == arm for arm, entry in metadata.items()):
         raise ValueError("Training metadata must describe completed runs.")
@@ -83,8 +94,8 @@ def main():
         _build_main_results_table(records),
         "## Matched-pool format comparisons",
         _markdown_table(["Left", "Right", "Left only", "Right only", "Gap (pp)", "Exact p", "Holm p", "Decision"], format_rows),
-        "## Historical reference comparison",
-        "The historical LoRA also differs in training pool and runtime. The contrast estimates the combined recipe change.",
+        "## Same-pipeline LoRA reference comparison",
+        "The reference adapter was trained under the historical recipe and re-evaluated through the same pipeline. This contrast also changes the training pool and does not isolate the objective change.",
         _markdown_table(["Left", "Right", "Left only", "Right only", "Gap (pp)", "Exact p"], [[left, right, str(a), str(b), f"{100 * gap:+.2f}", f"{p:.4g}"]]),
         "## Accuracy by generated token count",
         "Length strata are descriptive because the intervention can change stratum membership.",
