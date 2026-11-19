@@ -14,7 +14,7 @@ As large language models are increasingly deployed under resource constraints, p
 
 GSM8K consists of approximately 8,500 grade-school math word problems requiring multi-step arithmetic reasoning, with a final numerical answer delimited by `####`. We sample `train[:6000]` for training, `train[6000:6500]` for validation, and `test[:100]` for evaluation.
 
-All inference uses a chat template with a fixed system prompt instructing the model to reason step by step and end with `#### <number>`. The user turn contains the problem statement and the model generates the assistant turn—a format consistent with the training data across all PEFT conditions.
+All inference uses a chat template with a fixed system prompt instructing the model to reason step by step and end with `#### <number>`. The user turn contains the problem statement, and the model generates the assistant turn. The archived training runs used the same conversation roles but omitted the evaluator's system instruction. Both code paths relied on the tokenizer for the date header. The actual date lines for those runs were not saved. [Prompt audit](phase0_audit.md#2026-11-19-historical-prompt-correction-and-phase-1-alignment)
 
 We annotate each test example with a seven-category taxonomy: arithmetic, fractions\_percentages, unit\_conversion, multi\_hop, algebraic, comparison, and distractor\_heavy. Examples matching none of these tags are labeled uncategorized. In the 100-example evaluation subset, the unit\_conversion and algebraic categories had zero representatives and are accordingly omitted from the per-category analysis.
 

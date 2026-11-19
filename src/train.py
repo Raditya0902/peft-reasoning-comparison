@@ -24,6 +24,7 @@ from transformers import (
 )
 
 from src.token_trainer import TokenLossTrainer
+from src.prompts import MATH_SYSTEM_INSTRUCTIONS
 from src.training_objective import IGNORE_INDEX, assistant_tokens
 
 TARGET_FORMATS = ("gold", "stripped", "self_generated")
@@ -323,15 +324,16 @@ def main() -> None:
             raise ValueError("Target metadata does not match the configured complete candidate pool.")
         prompt_date = target_meta["prompt_date"]
         train_ds = _record_selection(args.accepted_targets, train_ds, args.target_format)
+    instructed = args.accepted_targets is not None
     train_fingerprint = train_ds._fingerprint
     validation_fingerprint = val_ds._fingerprint
     orig_cols = train_ds.column_names
     train_ds = train_ds.map(
-        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date),
+        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date, instructed=instructed),
         remove_columns=orig_cols,
     )
     val_ds = val_ds.map(
-        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date),
+        lambda ex: assistant_tokens(ex, tokenizer, cfg.data.max_seq_length, prompt_date, instructed=instructed),
         remove_columns=val_ds.column_names,
     )
 
@@ -383,6 +385,7 @@ def main() -> None:
         "validation_fingerprint": validation_fingerprint,
         "device": str(device),
         "prompt_date": prompt_date,
+        "system_instructions": MATH_SYSTEM_INSTRUCTIONS if instructed else None,
         "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
         "model_dtype": str(model.dtype),
         "versions": {

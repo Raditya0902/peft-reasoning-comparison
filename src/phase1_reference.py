@@ -131,6 +131,7 @@ def report(reference_dir: Path, parity_dir: Path, archive_dir: Path) -> str:
     sections = [
         "# Same-pipeline V100 test references",
         "Question-bootstrap percentile intervals use 10,000 resamples. Paired McNemar tests are two-sided and exact, with Holm adjustment across all 15 comparisons. All current comparisons use the FP16 V100 pipeline. The historical column is for drift diagnosis.",
+        "Answer-first counts outputs that begin with `####` after leading whitespace or end within 10 generated tokens. Each output counts at most once. Current token counts include the first EOS when present.",
         _build_main_results_table(records),
         "## Paired tests",
         _markdown_table(["Left", "Right", "Left only", "Right only", "Gap (pp)", "Exact p", "Holm p", "Same pipeline", "Historical"], pairs),

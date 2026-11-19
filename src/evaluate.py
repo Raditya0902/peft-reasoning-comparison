@@ -17,6 +17,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from src.categorize import categorize
 from src.extract_answer import extract_answer
+from src.prompts import MATH_SYSTEM_INSTRUCTIONS
 
 MAX_NEW_TOKENS = 512
 MAX_INPUT_TOKENS = 2048  # LLaMA-3.2 supports 128k context; 512 was over-conservative
@@ -32,12 +33,12 @@ def _get_device() -> str:
 
 def _load_model_and_tokenizer(
     model_id: str, dtype_name: str | None = None, require_cuda: bool = False,
-    *, device: str | None = None,
+    *, device: str | None = None, revision: str | None = None,
 ) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
     device = device or _get_device()
     if require_cuda and device != "cuda":
         raise RuntimeError("This run requires CUDA.")
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.truncation_side = "left"
@@ -49,10 +50,10 @@ def _load_model_and_tokenizer(
 
     if device == "cuda":
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, torch_dtype=dtype, device_map="auto"
+            model_id, torch_dtype=dtype, device_map="auto", revision=revision
         )
     else:
-        model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype)
+        model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype, revision=revision)
         model = model.to(device)
 
     model.eval()
@@ -83,11 +84,7 @@ def _load_few_shot_examples(n: int, seed: int) -> list[dict]:
 
 
 def _build_messages(question: str, few_shot_examples: list[dict]) -> list[dict]:
-    system = (
-        "Solve the math word problem step by step. "
-        "End your response with '#### <number>' where <number> is the final integer answer."
-    )
-    messages: list[dict] = [{"role": "system", "content": system}]
+    messages: list[dict] = [{"role": "system", "content": MATH_SYSTEM_INSTRUCTIONS}]
     for ex in few_shot_examples:
         messages.append({"role": "user", "content": ex["question"]})
         messages.append({"role": "assistant", "content": ex["answer"]})
@@ -161,13 +158,22 @@ def _generate_batch(
     return generations
 
 
-def _render_prompt(tokenizer, question: str, few_shot_examples: list[dict], prompt_date: str) -> str:
-    return tokenizer.apply_chat_template(
+def _render_prompt(tokenizer, question: str, few_shot_examples: list[dict], prompt_date: str,
+                   *, omit_prompt_date: bool = False) -> str:
+    prompt = tokenizer.apply_chat_template(
         _build_messages(question, few_shot_examples),
         tokenize=False,
         add_generation_prompt=True,
         date_string=prompt_date,
     )
+
+    if omit_prompt_date:
+        system, user_header, rest = prompt.partition("<|start_header_id|>user<|end_header_id|>")
+        date_line = f"Today Date: {prompt_date}\n"
+        if not user_header or system.count(date_line) != 1:
+            raise ValueError("Expected exactly one date line in the system header.")
+        prompt = system.replace(date_line, "", 1) + user_header + rest
+    return prompt
 
 
 def _score_generation(
@@ -238,6 +244,8 @@ def main() -> None:
     parser.add_argument("--dtype", choices=["float16", "bfloat16", "float32"])
     parser.add_argument("--require_cuda", action="store_true")
     parser.add_argument("--prompt_date", default=datetime.now(timezone.utc).strftime("%d %b %Y"))
+    parser.add_argument("--revision")
+    parser.add_argument("--omit_prompt_date", action="store_true", help="Remove only the template Today Date line")
     args = parser.parse_args()
     if args.batch_size < 1 or (args.subset_size is not None and args.subset_size < 1):
         parser.error("batch_size and subset_size must be positive")
@@ -250,7 +258,7 @@ def main() -> None:
     torch.manual_seed(args.seed)
 
     print(f"Loading model: {args.model}")
-    model, tokenizer = _load_model_and_tokenizer(args.model, args.dtype, args.require_cuda)
+    model, tokenizer = _load_model_and_tokenizer(args.model, args.dtype, args.require_cuda, revision=args.revision)
 
     adapter_sha256 = None
     if args.adapter is not None:
@@ -276,7 +284,11 @@ def main() -> None:
         for offset in tqdm(range(0, len(indices), args.batch_size), desc="Evaluating batches"):
             batch = indices[offset:offset + args.batch_size]
             examples = [dataset[idx] for idx in batch]
-            prompts = [_render_prompt(tokenizer, ex["question"], few_shot_examples, args.prompt_date) for ex in examples]
+            prompts = [
+                _render_prompt(tokenizer, ex["question"], few_shot_examples, args.prompt_date,
+                               omit_prompt_date=args.omit_prompt_date)
+                for ex in examples
+            ]
             batch_start = time.perf_counter()
             generations = _generate_batch(model, tokenizer, prompts)
             batch_wall_ms = (time.perf_counter() - batch_start) * 1000

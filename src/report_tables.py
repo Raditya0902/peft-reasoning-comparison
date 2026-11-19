@@ -50,12 +50,17 @@ def _load_baseline_summary(results_dir: Path) -> dict[str, dict]:
     return {entry["run"]: entry for entry in entries}
 
 
+def _is_answer_first(record: dict) -> bool:
+    return record["model_output"].lstrip().startswith("####") or record["num_output_tokens"] <= 10
+
+
 def _compute_main_metrics(records: list[dict]) -> dict:
     n = len(records)
     if n == 0:
         return {
             "accuracy": 0.0,
             "extraction_failure_rate": 0.0,
+            "answer_first_rate": 0.0,
             "avg_latency_ms": 0.0,
             "avg_output_tokens": 0.0,
         }
@@ -64,6 +69,7 @@ def _compute_main_metrics(records: list[dict]) -> dict:
     return {
         "accuracy": n_correct / n,
         "extraction_failure_rate": n_failures / n,
+        "answer_first_rate": sum(map(_is_answer_first, records)) / n,
         "avg_latency_ms": sum(r["latency_ms"] for r in records) / n,
         "avg_output_tokens": sum(r["num_output_tokens"] for r in records) / n,
     }
@@ -98,11 +104,12 @@ def _mcnemar_exact(left_only: int, right_only: int) -> float:
 
 
 def _rescore_runs(
-    pred_dir: Path, filenames: dict[str, str], expected_n: int
+    pred_dir: Path, filenames: dict[str, str], expected_n: int, *, expected_ids: set[str] | None = None
 ) -> tuple[dict[str, list[dict]], list[list[str]]]:
     scored = {}
     diagnostics = []
-    expected_ids = {f"gsm8k-{i}" for i in range(expected_n)}
+    if expected_ids is None:
+        expected_ids = {f"gsm8k-{i}" for i in range(expected_n)}
     reference = None
     for run, filename in filenames.items():
         records = _load_jsonl(pred_dir / filename)
@@ -139,7 +146,8 @@ def _rescore_runs(
 def _build_main_results_table(run_records: dict[str, list[dict]]) -> str:
     metrics = {run: _compute_main_metrics(records) for run, records in run_records.items()}
     sorted_runs = sorted(run_records, key=lambda r: metrics[r]["accuracy"], reverse=True)
-    headers = ["Run", "Correct", "Accuracy", "Bootstrap 95% CI", "Avg Output Tokens", "Extraction Failure Rate"]
+    headers = ["Run", "Correct", "Accuracy", "Bootstrap 95% CI", "Avg Output Tokens",
+               "Extraction Failure Rate", "Answer-first Rate"]
     rows = []
     for run in sorted_runs:
         records = run_records[run]
@@ -150,6 +158,7 @@ def _build_main_results_table(run_records: dict[str, list[dict]]) -> str:
             "[{:.4f}, {:.4f}]".format(*_bootstrap_ci(correct)),
             f"{metrics[run]['avg_output_tokens']:.2f}",
             f"{metrics[run]['extraction_failure_rate']:.4f}",
+            f"{metrics[run]['answer_first_rate']:.4f}",
         ])
     return _markdown_table(headers, rows)
 

@@ -86,6 +86,45 @@ def estimate(reference_dir: Path, parity_dir: Path, train_history: Path, tokeniz
     }
 
 
+def phase2_from_completed_arms(run_dir: Path, parity: Path, train_history: Path) -> dict:
+    """Replace Phase 2 proxies with the measured Phase 1 training and decoding times."""
+    train = {arm: _read(run_dir / f"{arm}_training.json") for arm in ARMS}
+    if any(entry["status"] != "completed" for entry in train.values()):
+        raise ValueError("Phase 2 estimates require completed Phase 1 arms.")
+    history = {row["run"]: row["train_runtime_s"]
+               for row in _read(train_history) if "train_runtime_s" in row}
+    valid_h = mean(_read(run_dir / f"{arm}_validation.metadata.json")["wall_seconds"] / HOUR for arm in ARMS)
+    test_h = mean(_read(run_dir / f"{arm}_test.metadata.json")["wall_seconds"] / HOUR for arm in ARMS)
+    lora_h = train["gold"]["train_runtime_s"] / HOUR
+    # Scale to the planned full pool using observed examples as the time proxy.
+    lora_h *= train["gold"]["candidate_count"] / train["gold"]["target_length_tokens"]["count"]
+    two_epoch_hours = {method: lora_h * history[method] / history["lora"] for method in ("lora", "dora", "ia3")}
+    base_h = sum(_read(parity / f"{mode}_batched.metadata.json")["wall_seconds"] / HOUR
+                 for mode in ("zeroshot", "fewshot5"))
+    work = {
+        "six_one_epoch_sweep_trainings": 1.5 * (two_epoch_hours["lora"] + two_epoch_hours["ia3"]),
+        "six_validation_decodes": 6 * valid_h,
+        "nine_two_epoch_trainings": 3 * sum(two_epoch_hours.values()),
+        "nine_adapter_test_decodes": 9 * test_h,
+        "two_base_test_decodes": base_h,
+    }
+    return {
+        "phase1_measured_training_gpu_hours_by_arm": {
+            arm: entry["train_runtime_s"] / HOUR for arm, entry in train.items(),
+        },
+        "phase1_mean_validation_decode_gpu_hours": valid_h,
+        "phase1_mean_test_decode_gpu_hours": test_h,
+        "phase2_estimated_gpu_hours_by_component": work,
+        "phase2_estimated_gpu_hours": sum(work.values()),
+        "assumptions": [
+            "Scale measured aligned gold training time from the matched subset to the full candidate count.",
+            "Scale DoRA and IA3 using historical relative training times.",
+            "Use Phase 1 adapter decodes and batched Instruct baselines as proxies for Base.",
+            "Exclude setup, idle time, and the optional IA3 epoch curve.",
+        ],
+    }
+
+
 def vm_cost(lifecycles: list[dict], disk: dict) -> dict:
     """Apply Iowa public on-demand rates to measured instance intervals."""
     rate_v100 = 2.48

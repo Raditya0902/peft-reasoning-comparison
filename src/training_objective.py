@@ -3,11 +3,22 @@
 import torch
 from torch.nn import functional as F
 
+from src.prompts import MATH_SYSTEM_INSTRUCTIONS
+
 IGNORE_INDEX = -100
 
 
-def assistant_tokens(example: dict, tokenizer, max_seq_length: int, prompt_date: str) -> dict:
-    prompt = [{"role": "user", "content": example["question"]}]
+def training_prompt_messages(question: str, *, instructed: bool = False) -> list[dict]:
+    messages = []
+    if instructed:
+        messages.append({"role": "system", "content": MATH_SYSTEM_INSTRUCTIONS})
+    messages.append({"role": "user", "content": question})
+    return messages
+
+
+def assistant_tokens(example: dict, tokenizer, max_seq_length: int, prompt_date: str,
+                     *, instructed: bool = False) -> dict:
+    prompt = training_prompt_messages(example["question"], instructed=instructed)
     complete = [*prompt, {"role": "assistant", "content": example["answer"]}]
     prefix = tokenizer.apply_chat_template(prompt, tokenize=True, add_generation_prompt=True, date_string=prompt_date)
     full = tokenizer.apply_chat_template(complete, tokenize=True, add_generation_prompt=False, date_string=prompt_date)

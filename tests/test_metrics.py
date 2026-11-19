@@ -19,6 +19,7 @@ def _rec(
     category_tags: list[str] | None = None,
     latency_ms: float = 100.0,
     num_output_tokens: int = 50,
+    model_output: str = "Reasoning",
 ) -> dict:
     return {
         "correct": correct,
@@ -26,6 +27,7 @@ def _rec(
         "category_tags": category_tags if category_tags is not None else [],
         "latency_ms": latency_ms,
         "num_output_tokens": num_output_tokens,
+        "model_output": model_output,
     }
 
 
@@ -63,6 +65,17 @@ def test_extraction_failure_rate():
     ]
     metrics = _compute_main_metrics(records)
     assert metrics["extraction_failure_rate"] == pytest.approx(0.20)
+
+
+@pytest.mark.unit
+def test_answer_first_counts_marker_or_short_output_once():
+    records = [
+        _rec(True, num_output_tokens=14, model_output="\n #### 4"),
+        _rec(False, extraction_failure=True, num_output_tokens=10),
+        _rec(True, num_output_tokens=3, model_output="#### 4"),
+        _rec(True, num_output_tokens=11, model_output="Reasoning\n#### 4"),
+    ]
+    assert _compute_main_metrics(records)["answer_first_rate"] == 0.75
 
 
 @pytest.mark.unit
